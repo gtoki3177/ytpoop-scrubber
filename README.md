@@ -1,6 +1,8 @@
-# Scrub Stretch
+# YTPoop Scrubber
 
-桌面版的「拖移刷音」工具（仿手機 audio stretch 類 app 的核心操作，自己實作，非逆向）。
+拖著音訊或影片來回刷的網頁工具，拿來做美式鬼畜（YouTube Poop）那種卡住、倒退、重複的效果。核心操作仿手機的 audio stretch 類 app，自己實作，非逆向。
+
+線上版：https://gtoki3177.github.io/ytpoop-scrubber/
 
 **用法**：直接用 Chrome / Vivaldi / Edge 開 `index.html`（雙擊即可），把音訊或影片拖進去。
 
