@@ -184,6 +184,8 @@ footer kbd{margin-right:6px}
   filter:drop-shadow(0 1px 1px var(--shadow));z-index:10}
 #ghost svg{width:22px;height:22px}
 body.locked #ghost{display:block}
+#ghost .open,#ghost.idle .grab{display:none}
+#ghost.idle .open{display:block}
 #vid,.hiddenVid{position:absolute;width:2px;height:2px;opacity:0;pointer-events:none;left:0;top:0}
 
 @media (max-width:1560px){ .brand span{display:none} }
@@ -221,7 +223,7 @@ body.locked #ghost{display:block}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-arrow-counter-clockwise" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a96,96,0,0,1-94.71,96H128A95.38,95.38,0,0,1,62.1,197.8a8,8,0,0,1,11-11.63A80,80,0,1,0,71.43,71.39a3.07,3.07,0,0,1-.26.25L44.59,96H72a8,8,0,0,1,0,16H24a8,8,0,0,1-8-8V56a8,8,0,0,1,16,0V85.8L60.25,60A96,96,0,0,1,224,128Z"/></symbol><symbol id="i-download-simple" viewBox="0 0 256 256" fill="currentColor"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z"/></symbol><symbol id="i-folder-open" viewBox="0 0 256 256" fill="currentColor"><path d="M245,110.64A16,16,0,0,0,232,104H216V88a16,16,0,0,0-16-16H130.67L102.94,51.2a16.14,16.14,0,0,0-9.6-3.2H40A16,16,0,0,0,24,64V208h0a8,8,0,0,0,8,8H211.1a8,8,0,0,0,7.59-5.47l28.49-85.47A16.05,16.05,0,0,0,245,110.64ZM93.34,64,123.2,86.4A8,8,0,0,0,128,88h72v16H69.77a16,16,0,0,0-15.18,10.94L40,158.7V64Zm112,136H43.1l26.67-80H232Z"/></symbol><symbol id="i-hand-grabbing-fill" viewBox="0 0 256 256" fill="currentColor"><path d="M216,104v48a88,88,0,0,1-176,0V136a16,16,0,0,1,32,0v8a8,8,0,0,0,16,0V88a16,16,0,0,1,32,0v16a8,8,0,0,0,16,0V88a16,16,0,0,1,32,0v16a8,8,0,0,0,16,0,16,16,0,0,1,32,0Z"/></symbol><symbol id="i-pause-fill" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48V208a16,16,0,0,1-16,16H160a16,16,0,0,1-16-16V48a16,16,0,0,1,16-16h40A16,16,0,0,1,216,48ZM96,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V48A16,16,0,0,0,96,32Z"/></symbol><symbol id="i-pause" viewBox="0 0 256 256" fill="currentColor"><path d="M200,32H160a16,16,0,0,0-16,16V208a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Zm0,176H160V48h40ZM96,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V48A16,16,0,0,0,96,32Zm0,176H56V48H96Z"/></symbol><symbol id="i-play-fill" viewBox="0 0 256 256" fill="currentColor"><path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z"/></symbol><symbol id="i-play" viewBox="0 0 256 256" fill="currentColor"><path d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z"/></symbol><symbol id="i-record-fill" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm72-88a72,72,0,1,1-72-72A72.08,72.08,0,0,1,200,128Z"/></symbol><symbol id="i-record" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm0-160a72,72,0,1,0,72,72A72.08,72.08,0,0,0,128,56Zm0,128a56,56,0,1,1,56-56A56.06,56.06,0,0,1,128,184Z"/></symbol><symbol id="i-stop" viewBox="0 0 256 256" fill="currentColor"><path d="M200,40H56A16,16,0,0,0,40,56V200a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,160H56V56H200V200Z"/></symbol><symbol id="i-upload-simple" viewBox="0 0 256 256" fill="currentColor"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,77.66,120,51.31V144a8,8,0,0,0,16,0V51.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,93.66,77.66Z"/></symbol><symbol id="i-waveform" viewBox="0 0 256 256" fill="currentColor"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></symbol><symbol id="i-x" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></symbol></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-arrow-counter-clockwise" viewBox="0 0 256 256" fill="currentColor"><path d="M224,128a96,96,0,0,1-94.71,96H128A95.38,95.38,0,0,1,62.1,197.8a8,8,0,0,1,11-11.63A80,80,0,1,0,71.43,71.39a3.07,3.07,0,0,1-.26.25L44.59,96H72a8,8,0,0,1,0,16H24a8,8,0,0,1-8-8V56a8,8,0,0,1,16,0V85.8L60.25,60A96,96,0,0,1,224,128Z"/></symbol><symbol id="i-download-simple" viewBox="0 0 256 256" fill="currentColor"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z"/></symbol><symbol id="i-folder-open" viewBox="0 0 256 256" fill="currentColor"><path d="M245,110.64A16,16,0,0,0,232,104H216V88a16,16,0,0,0-16-16H130.67L102.94,51.2a16.14,16.14,0,0,0-9.6-3.2H40A16,16,0,0,0,24,64V208h0a8,8,0,0,0,8,8H211.1a8,8,0,0,0,7.59-5.47l28.49-85.47A16.05,16.05,0,0,0,245,110.64ZM93.34,64,123.2,86.4A8,8,0,0,0,128,88h72v16H69.77a16,16,0,0,0-15.18,10.94L40,158.7V64Zm112,136H43.1l26.67-80H232Z"/></symbol><symbol id="i-hand-fill" viewBox="0 0 256 256" fill="currentColor"><path d="M216,64v90.93c0,46.2-36.85,84.55-83,85.06A83.71,83.71,0,0,1,72.6,215.4C50.79,192.33,26.15,136,26.15,136a16,16,0,0,1,6.53-22.23c7.66-4,17.1-.84,21.4,6.62l21,36.44a6.09,6.09,0,0,0,6,3.09l.12,0A8.19,8.19,0,0,0,88,151.74V48a16,16,0,0,1,16.77-16c8.61.4,15.23,7.82,15.23,16.43V112a8,8,0,0,0,8.53,8,8.17,8.17,0,0,0,7.47-8.25V32a16,16,0,0,1,16.77-16c8.61.4,15.23,7.82,15.23,16.43V120a8,8,0,0,0,8.53,8,8.17,8.17,0,0,0,7.47-8.25V64.45c0-8.61,6.62-16,15.23-16.43A16,16,0,0,1,216,64Z"/></symbol><symbol id="i-hand-grabbing-fill" viewBox="0 0 256 256" fill="currentColor"><path d="M216,104v48a88,88,0,0,1-176,0V136a16,16,0,0,1,32,0v8a8,8,0,0,0,16,0V88a16,16,0,0,1,32,0v16a8,8,0,0,0,16,0V88a16,16,0,0,1,32,0v16a8,8,0,0,0,16,0,16,16,0,0,1,32,0Z"/></symbol><symbol id="i-pause-fill" viewBox="0 0 256 256" fill="currentColor"><path d="M216,48V208a16,16,0,0,1-16,16H160a16,16,0,0,1-16-16V48a16,16,0,0,1,16-16h40A16,16,0,0,1,216,48ZM96,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V48A16,16,0,0,0,96,32Z"/></symbol><symbol id="i-pause" viewBox="0 0 256 256" fill="currentColor"><path d="M200,32H160a16,16,0,0,0-16,16V208a16,16,0,0,0,16,16h40a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Zm0,176H160V48h40ZM96,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V48A16,16,0,0,0,96,32Zm0,176H56V48H96Z"/></symbol><symbol id="i-play-fill" viewBox="0 0 256 256" fill="currentColor"><path d="M240,128a15.74,15.74,0,0,1-7.6,13.51L88.32,229.65a16,16,0,0,1-16.2.3A15.86,15.86,0,0,1,64,216.13V39.87a15.86,15.86,0,0,1,8.12-13.82,16,16,0,0,1,16.2.3L232.4,114.49A15.74,15.74,0,0,1,240,128Z"/></symbol><symbol id="i-play" viewBox="0 0 256 256" fill="currentColor"><path d="M232.4,114.49,88.32,26.35a16,16,0,0,0-16.2-.3A15.86,15.86,0,0,0,64,39.87V216.13A15.94,15.94,0,0,0,80,232a16.07,16.07,0,0,0,8.36-2.35L232.4,141.51a15.81,15.81,0,0,0,0-27ZM80,215.94V40l143.83,88Z"/></symbol><symbol id="i-record-fill" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm72-88a72,72,0,1,1-72-72A72.08,72.08,0,0,1,200,128Z"/></symbol><symbol id="i-record" viewBox="0 0 256 256" fill="currentColor"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216Zm0-160a72,72,0,1,0,72,72A72.08,72.08,0,0,0,128,56Zm0,128a56,56,0,1,1,56-56A56.06,56.06,0,0,1,128,184Z"/></symbol><symbol id="i-stop" viewBox="0 0 256 256" fill="currentColor"><path d="M200,40H56A16,16,0,0,0,40,56V200a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V56A16,16,0,0,0,200,40Zm0,160H56V56H200V200Z"/></symbol><symbol id="i-upload-simple" viewBox="0 0 256 256" fill="currentColor"><path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0ZM93.66,77.66,120,51.31V144a8,8,0,0,0,16,0V51.31l26.34,26.35a8,8,0,0,0,11.32-11.32l-40-40a8,8,0,0,0-11.32,0l-40,40A8,8,0,0,0,93.66,77.66Z"/></symbol><symbol id="i-waveform" viewBox="0 0 256 256" fill="currentColor"><path d="M56,96v64a8,8,0,0,1-16,0V96a8,8,0,0,1,16,0ZM88,24a8,8,0,0,0-8,8V224a8,8,0,0,0,16,0V32A8,8,0,0,0,88,24Zm40,32a8,8,0,0,0-8,8V192a8,8,0,0,0,16,0V64A8,8,0,0,0,128,56Zm40,32a8,8,0,0,0-8,8v64a8,8,0,0,0,16,0V96A8,8,0,0,0,168,88Zm40-16a8,8,0,0,0-8,8v96a8,8,0,0,0,16,0V80A8,8,0,0,0,208,72Z"/></symbol><symbol id="i-x" viewBox="0 0 256 256" fill="currentColor"><path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"/></symbol></svg>
 <header>
   <div class="left">
   <h1 class="brand"><svg class="i" aria-hidden="true"><use href="#i-waveform"/></svg><span>YTPoop Scrubber</span></h1>
@@ -275,7 +277,7 @@ body.locked #ghost{display:block}
 </footer>
 <div id="sr" class="sr-only" role="status" aria-live="polite"></div>
 <video id="vid" muted playsinline preload="auto"></video>
-<div id="ghost" aria-hidden="true"><svg class="i"><use href="#i-hand-grabbing-fill"/></svg></div>
+<div id="ghost" aria-hidden="true"><svg class="i grab"><use href="#i-hand-grabbing-fill"/></svg><svg class="i open"><use href="#i-hand-fill"/></svg></div>
 <script id="worklet" type="text/plain">
 // ---- 音訊引擎：WSOLA 粒子重疊相加 ----
 // playhead 位置（樣本）由主執行緒控制；每 H 個輸出樣本放一顆以 playhead 為中心的 Hann 粒子，
@@ -486,7 +488,11 @@ let channels = [], sr = 48000, dur = 0, mono = null, mins = null, maxs = null, p
 let hasVideo = false, fileName = '', N = 2048, ovImg = null;
 const st = { pos:0, posT:0, wmode:'stop', wrate:1, rate:1, playing:false, dragging:false, dragTarget:0, replaying:null };
 let zoom = 4;               // 刷動視窗可見秒數
-const drag = { kind:null, x0:0, p0:0, acc:0, lastX:0, vx:0, vy:0, locked:false };
+const drag = { kind:null, x0:0, p0:0, acc:0, lastX:0, vx:0, vy:0 };
+// 滑鼠鎖定的狀態。瀏覽器在鎖定時會跳「按 Esc 顯示游標」的提示，網頁關不掉；但 Chromium 的規則是：
+// 提示完整顯示到自己消失一次之後，網頁自己解除再鎖定就不會再跳（primed）。
+// 所以第一次鎖定會保持到提示消失才解除；使用者按 Esc 或切走分頁會讓瀏覽器收回這個許可，要重新來一次。
+const lock = { active: false, t0: 0, primed: false, timer: 0, selfExit: false, holdMs: 6000 };
 let recorder = null, recStream = null, recChunks = [], scriptResolve = null, recT0 = 0;
 const takes = []; let takeSeq = 0;
 
@@ -679,7 +685,8 @@ el.grainSeg.onclick = e => {
 function startDrag(e, kind) {
   if (!node || st.replaying) return;
   try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
-  drag.kind = kind; drag.x0 = drag.lastX = drag.vx = e.clientX; drag.vy = e.clientY; drag.acc = 0;
+  drag.kind = kind; drag.x0 = drag.lastX = e.clientX; drag.acc = 0;
+  if (!lock.active) { drag.vx = e.clientX; drag.vy = e.clientY; }     // 還鎖著時 clientX 是凍結的，替身游標留在原位
   drag.mouse = e.pointerType === 'mouse'; drag.lockAsked = false;
   // 先讀目前播放位置，再進入拖曳狀態（拖曳中 estPos() 回傳的是 dragTarget，會拿到上次拖曳停下的舊值）
   const now = estPos();
@@ -691,20 +698,25 @@ function startDrag(e, kind) {
   } else st.dragTarget = now;
   drag.p0 = st.dragTarget;
   send({ t:'mode', mode:'scrub' });
+  ghostState();
+}
+function moveGhost(mx, my) {
+  drag.vx = ((drag.vx + mx) % innerWidth + innerWidth) % innerWidth;   // 左右繞回
+  drag.vy = clamp(drag.vy + my, 0, innerHeight - 1);
+  placeGhost();
 }
 function moveDrag(e) {
+  if (lock.active && !st.dragging) { moveGhost(e.movementX, e.movementY); return; }   // 等提示消失的期間：替身游標照常跟著動
   if (!st.dragging || drag.kind === 'kbd') return;
   let t;
   if (drag.kind === 'abs') { const r = el.ovCv.getBoundingClientRect(); t = clamp((e.clientX - r.left) / r.width, 0, 1) * dur; }
   else {
-    if (drag.locked) {
+    if (lock.active) {
       let mx = e.movementX, my = e.movementY;
       // Chrome 剛鎖定時偶爾會送一筆「游標被移到視窗中央」的假位移；單筆超過視窗 1/4 寬也當成異常丟掉
-      if ((performance.now() - drag.lockT < 120 && Math.abs(mx) > 40) || Math.abs(mx) > innerWidth / 4) mx = my = 0;
+      if ((performance.now() - lock.t0 < 120 && Math.abs(mx) > 40) || Math.abs(mx) > innerWidth / 4) mx = my = 0;
       drag.acc += mx;
-      drag.vx = ((drag.vx + mx) % innerWidth + innerWidth) % innerWidth;   // 左右繞回
-      drag.vy = clamp(drag.vy + my, 0, innerHeight - 1);
-      placeGhost();
+      moveGhost(mx, my);
     } else {
       drag.acc += e.clientX - drag.lastX; drag.lastX = e.clientX;
       // 平常不鎖滑鼠（放開時游標就在放開的地方）；拖出視窗左右邊緣才鎖定，改用替身游標繞回
@@ -724,19 +736,36 @@ function moveDrag(e) {
   st.dragTarget = t; lastMoveT = performance.now(); send({ t:'target', pos: t * sr });
 }
 function placeGhost() { el.ghost.style.transform = `translate(${drag.vx}px, ${drag.vy}px)`; }
+function ghostState() { el.ghost.classList.toggle('idle', !st.dragging); }
+function unlockNow() { if (!lock.active) return; lock.selfExit = true; clearTimeout(lock.timer); document.exitPointerLock(); }
+function settleLock() {                     // 拖曳結束時決定要不要解除鎖定
+  if (!lock.active) return;
+  const held = performance.now() - lock.t0;
+  if (lock.primed) return unlockNow();     // 提示已經完整顯示過：馬上解除，下次鎖定不會再跳
+  if (held >= lock.holdMs) { lock.primed = true; return unlockNow(); }
+  clearTimeout(lock.timer);                // 提示還在：先保持鎖定，時間到再解除（期間再按下可以繼續刷）
+  lock.timer = setTimeout(() => { if (lock.active && !st.dragging) { lock.primed = true; unlockNow(); } }, lock.holdMs - held + 50);
+}
 document.addEventListener('pointerlockchange', () => {
-  const on = document.pointerLockElement === el.scrubWrap;
-  if (on && st.dragging && drag.kind === 'rel') { drag.locked = true; drag.lockT = performance.now(); document.body.classList.add('locked'); placeGhost(); return; }
-  const was = drag.locked;
-  drag.locked = false; document.body.classList.remove('locked');
-  if (on) document.exitPointerLock();            // 鎖定晚到、拖曳已結束
-  else if (was && st.dragging) endDrag();        // 按 Esc 或切走視窗時結束拖曳
+  if (document.pointerLockElement === el.scrubWrap) {
+    lock.active = true; lock.t0 = performance.now(); lock.selfExit = false;
+    document.body.classList.add('locked'); ghostState(); placeGhost();
+    if (!st.dragging) settleLock();        // 鎖定晚到、拖曳已經結束
+    return;
+  }
+  const self = lock.selfExit;
+  lock.active = false; lock.selfExit = false; clearTimeout(lock.timer); document.body.classList.remove('locked');
+  if (!self) {                             // 不是我們解除的（按 Esc、切走視窗）：瀏覽器會收回許可，下次要重新等一次
+    lock.primed = false;
+    if (st.dragging && drag.kind === 'rel') endDrag();
+  }
 });
+document.addEventListener('visibilitychange', () => { if (document.hidden) lock.primed = false; });   // 切換分頁後保守地當成許可已失效
 function endDrag() {
   if (!st.dragging) return;
-  if (drag.locked) { drag.locked = false; document.body.classList.remove('locked'); document.exitPointerLock(); }
   st.dragging = false; st.pos = st.dragTarget; st.posT = performance.now();
   send(st.playing ? { t:'mode', mode:'play', rate: st.rate } : { t:'mode', mode:'stop' });
+  ghostState(); settleLock();
 }
 for (const [w, kind] of [[el.scrubWrap, 'rel'], [el.ovWrap, 'abs']]) {
   w.addEventListener('pointerdown', e => startDrag(e, kind));
@@ -1116,6 +1145,7 @@ function loop() {
   else if (st.replaying) { m = '重播 ' + st.replaying.name; cls = 'busy'; }
   else if (hasVideo && !fc.done && fc.vid) m = `影格快取 ${Math.floor(fc.scanT / dur * 100)}%`;
   else if (st.dragging) m = '刷動中';
+  else if (lock.active) m = `游標 ${Math.max(1, Math.ceil((lock.holdMs - (performance.now() - lock.t0)) / 1000))} 秒後恢復`;
   if (m !== loop.m) { loop.m = m; el.meter.textContent = m; el.meter.className = 'mono ' + cls; }
 }
 
@@ -1326,7 +1356,7 @@ addEventListener('keyup', e => { if (e.code === 'KeyF' && kb.hold) { kb.hold = f
 addEventListener('blur', () => { kb.hold = false; if (st.dragging) endDrag(); });   // 切走視窗時結束任何刷動
 el.vid.addEventListener('loadedmetadata', layout);
 
-if (/[?&]debug\b/.test(location.search)) window.app = { loadFile, st, takes, fc, an, detectPitch, noteOf, AW, get node() { return node; }, get ctx() { return ctx; }, encodeWav, get workletURL() { return workletURL; }, get channels() { return channels; } };
+if (/[?&]debug\b/.test(location.search)) window.app = { loadFile, st, takes, fc, an, lock, detectPitch, noteOf, AW, get node() { return node; }, get ctx() { return ctx; }, encodeWav, get workletURL() { return workletURL; }, get channels() { return channels; } };
 applyTheme(); markGrain(); layout(); renderTakes(); updUI(); loop();
 </script>
 </body>
