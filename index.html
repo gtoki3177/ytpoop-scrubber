@@ -129,6 +129,11 @@ body.dragover .drop>svg{color:var(--accent)}
 #side{border-left:1px solid var(--line);background:var(--surface);display:flex;flex-direction:column;min-height:0}
 .side-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 12px}
 .side-hd h2{font-size:20px;font-weight:600;margin:0}
+.pitch{display:flex;align-items:baseline;gap:10px;white-space:nowrap}
+#noteName{font-size:25px;line-height:1}
+#noteName.off{font-family:var(--font);font-size:13px;color:var(--muted)}
+#noteSub{font-size:13px;color:var(--muted);min-width:118px;text-align:right}
+#specCv{display:block;width:100%;height:150px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);flex:none}
 #takes{overflow:auto;overflow-x:hidden;padding:0 12px 14px;display:flex;flex-direction:column;gap:10px}
 .none{color:var(--muted);font-size:16px;padding:2px 2px;line-height:1.65}
 kbd{font-family:var(--mono);font-size:13px;color:var(--text);border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:5px;padding:0 6px}
@@ -211,6 +216,8 @@ body.locked #ghost{display:block}
     <div id="ovWrap"><canvas id="ovCv"></canvas></div>
   </section>
   <aside id="side">
+    <div class="side-hd"><h2>音高</h2><div class="pitch"><span id="noteSub" class="mono"></span><span id="noteName" class="mono"></span></div></div>
+    <canvas id="specCv" role="img" aria-label="playhead 位置的頻譜，橫軸為頻率"></canvas>
     <div class="side-hd"><h2>錄製</h2><button class="btn" id="importBtn" title="載入之前存下的操作紀錄（JSON）"><svg class="i" aria-hidden="true"><use href="#i-upload-simple"/></svg>載入紀錄</button></div>
     <input type="file" id="jsonIn" accept=".json,application/json" hidden>
     <div id="takes"></div>
@@ -421,10 +428,10 @@ const BLK = 128;
 const el = {
   open:$('#openBtn'), fileIn:$('#fileIn'), fname:$('#fname'), play:$('#playBtn'), speed:$('#speed'), speedOut:$('#speedOut'),
   freeze:$('#freeze'), pitch:$('#pitch'), grainSeg:$('#grainSeg'), rec:$('#recBtn'), stage:$('#stage'), stageCv:$('#stageCv'), empty:$('#empty'),
-  scrubWrap:$('#scrubWrap'), scrubCv:$('#scrubCv'), ghost:$('#ghost'), clock:$('#clock'), meter:$('#meter'), drop:$('#drop'), dropMsg:$('#dropMsg'), pick:$('#pickBtn'), ovWrap:$('#ovWrap'), ovCv:$('#ovCv'),
+  scrubWrap:$('#scrubWrap'), scrubCv:$('#scrubCv'), ghost:$('#ghost'), specCv:$('#specCv'), noteName:$('#noteName'), noteSub:$('#noteSub'), clock:$('#clock'), meter:$('#meter'), drop:$('#drop'), dropMsg:$('#dropMsg'), pick:$('#pickBtn'), ovWrap:$('#ovWrap'), ovCv:$('#ovCv'),
   takes:$('#takes'), importBtn:$('#importBtn'), jsonIn:$('#jsonIn'), status:$('#status'), vid:$('#vid'),
 };
-const sg = el.scrubCv.getContext('2d'), og = el.ovCv.getContext('2d'), stg = el.stageCv.getContext('2d');
+const sg = el.scrubCv.getContext('2d'), og = el.ovCv.getContext('2d'), stg = el.stageCv.getContext('2d'), spg = el.specCv.getContext('2d');
 
 let ctx = null, workletURL = null, master = null, recDest = null, node = null;
 let channels = [], sr = 48000, dur = 0, mono = null, mins = null, maxs = null, peak = 1;
@@ -494,6 +501,7 @@ async function loadFile(file) {
     el.stage.classList.toggle('hidden', !hasVideo);
     el.scrubWrap.classList.toggle('grow', !hasVideo);
     el.play.disabled = el.rec.disabled = false;
+    an.lastS = -1; an.disp = null;
     layout(); buildOverview(); updUI();
     if (hasVideo) startScan(el.vid.src); else stopScan();
     if (!el.status.textContent.startsWith('影片沒有')) status('');
@@ -677,6 +685,7 @@ function fitCanvas(cv) {
 function layout() {
   if (recorder) return;  // 錄製中不改解析度
   fitCanvas(el.scrubCv);
+  if (fitCanvas(el.specCv)) an.settle = 2;
   if (fitCanvas(el.ovCv) || !ovImg) buildOverview();
   if (hasVideo && el.vid.videoWidth) {
     let vw = el.vid.videoWidth, vh = el.vid.videoHeight;
@@ -688,7 +697,7 @@ function layout() {
   }
 }
 addEventListener('resize', () => { layout(); buildOverview(); });
-matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { readTokens(); buildOverview(); loop.blank = false; renderTakes(); });
+matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { readTokens(); buildOverview(); loop.blank = false; an.settle = 2; renderTakes(); });
 
 function buildOverview() {
   const W = el.ovCv.width, H = el.ovCv.height;
@@ -870,12 +879,135 @@ function drawStage(p) {
   if (v.readyState >= 2) { stg.drawImage(v, 0, 0, W, H); fc.stats.hold++; }
 }
 
+// ---------- 音高與頻譜 ----------
+// 分析的是 playhead 前後共 AW 個樣本的「原音」（不是喇叭輸出），所以停止、凍結、拖動時都看得到。
+// 頻譜：Hann 窗 + FFT。音高：不看頻譜最高峰（泛音常比基音強、低音解析度也不夠），
+// 改用 McLeod 的正規化自相關（NSDF）找波形重複的週期，自相關本身用 FFT 計算。
+const AW = 4096, NOTES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+const an = { x: new Float32Array(AW), re: new Float32Array(AW * 2), im: new Float32Array(AW * 2), sre: new Float32Array(AW), sim: new Float32Array(AW),
+  nsdf: new Float32Array(AW / 2 + 2), db: new Float32Array(AW / 2).fill(-200), win: new Float32Array(AW), disp: null, lastS: -1, settle: 0, f0: 0, text: null };
+for (let i = 0; i < AW; i++) an.win[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / AW);
+
+function fft(re, im, inverse) {            // 原地 radix-2 FFT，長度必須是 2 的次方
+  const n = re.length;
+  for (let i = 1, j = 0; i < n; i++) {     // 位元反轉重排
+    let bit = n >> 1;
+    for (; j & bit; bit >>= 1) j ^= bit;
+    j ^= bit;
+    if (i < j) { let t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; }
+  }
+  for (let len = 2; len <= n; len <<= 1) {
+    const ang = (inverse ? 2 : -2) * Math.PI / len, wr = Math.cos(ang), wi = Math.sin(ang), half = len >> 1;
+    for (let i = 0; i < n; i += len) {
+      let cr = 1, ci = 0;
+      for (let k = 0; k < half; k++) {
+        const a = i + k, b = a + half;
+        const xr = re[b] * cr - im[b] * ci, xi = re[b] * ci + im[b] * cr;
+        re[b] = re[a] - xr; im[b] = im[a] - xi; re[a] += xr; im[a] += xi;
+        const t = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = t;
+      }
+    }
+  }
+  if (inverse) for (let i = 0; i < n; i++) { re[i] /= n; im[i] /= n; }
+}
+
+function detectPitch(x) {                  // 回傳 { f, clarity } 或 null（靜音、噪音、沒有明確週期）
+  const W = AW, n = W * 2, re = an.re, im = an.im, nsdf = an.nsdf;
+  let e = 0;
+  for (let i = 0; i < W; i++) { re[i] = x[i]; e += x[i] * x[i]; }
+  re.fill(0, W); im.fill(0);
+  if (e / W < 1e-5) return null;                         // RMS 約低於 0.003 視為靜音
+  fft(re, im, false);
+  for (let i = 0; i < n; i++) { re[i] = re[i] * re[i] + im[i] * im[i]; im[i] = 0; }
+  fft(re, im, true);                                     // re[τ] = 自相關 r(τ)
+  const tauMin = Math.floor(sr / 4200), tauMax = Math.min(W / 2, Math.floor(sr / 45));
+  let m = 2 * e; nsdf[0] = 1;
+  for (let t = 1; t <= tauMax + 1; t++) {                // m(τ) = Σ x[j]² + x[j+τ]²，逐步扣掉兩端
+    m -= x[t - 1] * x[t - 1] + x[W - t] * x[W - t];
+    nsdf[t] = m > 1e-9 ? 2 * re[t] / m : 0;
+  }
+  const peaks = []; let maxV = 0, t = 1;
+  while (t <= tauMax && nsdf[t] > 0) t++;                // 跳過 τ=0 附近的第一個正區段
+  while (t <= tauMax) {                                  // 每個正區段取一個最高點
+    while (t <= tauMax && nsdf[t] <= 0) t++;
+    let pk = -1, pv = 0;
+    while (t <= tauMax && nsdf[t] > 0) { if (nsdf[t] > pv) { pv = nsdf[t]; pk = t; } t++; }
+    if (pk >= tauMin && pk < tauMax) { peaks.push(pk); if (pv > maxV) maxV = pv; }
+  }
+  if (!peaks.length || maxV < 0.5) return null;
+  const pk = peaks.find(q => nsdf[q] >= maxV * 0.9);     // 第一個夠高的峰 = 最短的週期，避免低八度誤判
+  const a = nsdf[pk - 1], b = nsdf[pk], c = nsdf[pk + 1], d = a - 2 * b + c;
+  const tau = d ? pk + 0.5 * (a - c) / d : pk;           // 拋物線內插，週期可以不是整數樣本
+  return { f: sr / tau, clarity: b };
+}
+
+function spectrum(x) {                     // 結果放在 an.db（dBFS，滿刻度正弦波為 0）
+  const re = an.sre, im = an.sim, w = an.win, db = an.db;
+  for (let i = 0; i < AW; i++) { re[i] = x[i] * w[i]; im[i] = 0; }
+  fft(re, im, false);
+  for (let i = 0; i < AW / 2; i++) db[i] = 20 * Math.log10(Math.hypot(re[i], im[i]) / (AW / 4) + 1e-10);
+}
+
+function noteOf(f) {
+  const m = 69 + 12 * Math.log2(f / 440), n = Math.round(m);
+  return { name: NOTES[((n % 12) + 12) % 12] + (Math.floor(n / 12) - 1), cents: Math.round((m - n) * 100) };
+}
+function showNote(r) {
+  let name = '無明確音高', sub = '';
+  if (r) { const q = noteOf(r.f); name = q.name; sub = (q.cents >= 0 ? '+' : '-') + Math.abs(q.cents) + '¢  ' + r.f.toFixed(1) + ' Hz'; }
+  const key = name + sub; if (key === an.text) return; an.text = key;
+  el.noteName.textContent = name; el.noteName.classList.toggle('off', !r); el.noteSub.textContent = sub;
+}
+
+function drawSpectrum() {
+  const cv = el.specCv, g = spg, W = cv.width, H = cv.height, d = devicePixelRatio || 1; if (!W) return;
+  if (!an.disp || an.disp.length !== W) an.disp = new Float32Array(W).fill(-200);
+  const fMin = 40, fMax = Math.min(12000, sr / 2), ratio = fMax / fMin, binHz = sr / AW, db = an.db, disp = an.disp;
+  const top = 22 * d, lo = -90, hi = -6, xOf = f => Math.log(f / fMin) / Math.log(ratio) * W;
+  g.fillStyle = C.bg; g.fillRect(0, 0, W, H);
+  for (let x = 0; x < W; x++) {                           // 對數頻率軸：低頻在相鄰頻格間內插，高頻取範圍內最大值
+    const b0 = fMin * Math.pow(ratio, x / W) / binHz, b1 = fMin * Math.pow(ratio, (x + 1) / W) / binHz;
+    let v;
+    if (b1 - b0 < 1) { const i = Math.floor(b0), f = b0 - i; v = db[i] * (1 - f) + db[Math.min(i + 1, db.length - 1)] * f; }
+    else { v = -200; for (let i = Math.floor(b0); i < b1 && i < db.length; i++) if (db[i] > v) v = db[i]; }
+    disp[x] = Math.max(v, disp[x] - 2.5);                 // 下降時每幀最多掉 2.5dB，畫面比較穩
+  }
+  const yOf = x => H - clamp((disp[x] - lo) / (hi - lo), 0, 1) * (H - top);
+  g.beginPath(); g.moveTo(0, H);
+  for (let x = 0; x < W; x++) g.lineTo(x, yOf(x));
+  g.lineTo(W, H); g.closePath(); g.fillStyle = C.played; g.fill();
+  g.beginPath();
+  for (let x = 0; x < W; x++) x ? g.lineTo(x, yOf(x)) : g.moveTo(x, yOf(x));
+  g.strokeStyle = C.wave; g.lineWidth = d; g.stroke();
+  g.font = `${13 * d}px "Fragment Mono", ui-monospace, monospace`; g.textBaseline = 'top';
+  for (let oct = 2; oct <= 8; oct++) {                    // 每個八度的 C 一條格線
+    const f = 440 * Math.pow(2, (12 * (oct + 1) - 69) / 12); if (f > fMax) break;
+    const x = Math.round(xOf(f));
+    g.fillStyle = C.line; g.fillRect(x, 0, 1, H);
+    g.fillStyle = C.muted; g.fillText('C' + oct, x + 4 * d, 4 * d);
+  }
+  if (an.f0 >= fMin && an.f0 <= fMax) { g.fillStyle = C.accent; g.fillRect(Math.round(xOf(an.f0)) - d / 2, top, Math.max(1, d), H - top); }
+}
+
+function analyze(p) {
+  const s0 = Math.round(p * sr) - AW / 2, moved = s0 !== an.lastS;
+  if (!moved && an.settle <= 0) return;                   // 位置沒變、畫面也穩定了就不重算
+  if (moved) {
+    an.lastS = s0; an.settle = 40;
+    const x = an.x, n = mono.length;
+    for (let i = 0; i < AW; i++) { const k = s0 + i; x[i] = k >= 0 && k < n ? mono[k] : 0; }
+    const r = detectPitch(x); an.f0 = r ? r.f : 0;
+    spectrum(x); showNote(r);
+  } else an.settle--;
+  drawSpectrum();
+}
+
 function loop() {
   requestAnimationFrame(loop);
   if (!mono) { if (!loop.blank) { drawScrub(0); loop.blank = true; } return; }
   loop.blank = false;
   const p = estPos();
-  drawScrub(p); drawOverview(p);
+  drawScrub(p); drawOverview(p); analyze(p);
   if (hasVideo) drawStage(p);
   const ct = fmt(p);
   if (ct !== loop.ct) { loop.ct = ct; el.clock.firstChild.nodeValue = ct + ' '; }
@@ -1058,7 +1190,7 @@ addEventListener('keydown', e => {
 });
 el.vid.addEventListener('loadedmetadata', layout);
 
-window.app = { loadFile, st, takes, fc, get node() { return node; }, get ctx() { return ctx; }, encodeWav, get workletURL() { return workletURL; }, get channels() { return channels; } };
+window.app = { loadFile, st, takes, fc, an, detectPitch, noteOf, AW, get node() { return node; }, get ctx() { return ctx; }, encodeWav, get workletURL() { return workletURL; }, get channels() { return channels; } };
 layout(); renderTakes(); updUI(); loop();
 </script>
 </body>
