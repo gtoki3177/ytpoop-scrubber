@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Scrub Stretch</title>
+<script>try{var t=localStorage.getItem("theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 /* 字型：Instrument Sans / Fragment Mono（SIL OFL，內嵌成 data URI 讓雙擊開檔也能離線使用；中文退回系統字型） */
 @font-face{font-family:"Instrument Sans";src:url(data:font/woff2;base64,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) format("woff2");font-weight:400;font-display:swap}
@@ -21,6 +22,7 @@
   --text:#ebedf2; --muted:#9aa1ae; --faint:#4b515d;
   --accent:#e9a23b; --accent-ink:#1b1306; --accent-soft:rgba(233,162,59,.13);
   --rec:#ef5a5f; --stage:#08090b;
+  --accent-strong:#e9a23b; --track:#646c7c; --shadow:rgba(0,0,0,.6);   /* accent-strong：焦點框、線條、文字用的強調色，對底色至少 3:1 */
   --wave:#c3c8d2; --played:#4a505c;
   --r-sm:8px; --r-md:12px; --btn-h:44px;      /* soft 半徑階：控制 8、面板 12 */
   --font:"Instrument Sans","Microsoft JhengHei UI","PingFang TC",system-ui,sans-serif;
@@ -28,15 +30,26 @@
   --ease:cubic-bezier(.2,.8,.2,1); --ease-io:cubic-bezier(.65,0,.35,1);
   --m-in:150ms; --m-out:120ms; --m-press:90ms; --m-slide:240ms;
 }
+/* 淺色：跟隨系統（除非手動選了深色），或手動選淺色。兩段的值要保持一致 */
 @media (prefers-color-scheme: light){
-  :root{
+  :root:not([data-theme=dark]){
     color-scheme:light;
     --bg:#eef0f3; --surface:#f8f9fa; --surface-2:#e8ebef; --line:#d8dce2; --line-strong:#b9c0ca;
     --text:#16181d; --muted:#545b69; --faint:#a3a9b3;
     --accent:#e39a2c; --accent-ink:#1b1306; --accent-soft:rgba(227,154,44,.16);
     --rec:#cf3a3f; --stage:#101114;
     --wave:#3a404b; --played:#b4bac4;
+    --accent-strong:#9a5b00; --track:#7f8794; --shadow:rgba(0,0,0,.35);
   }
+}
+:root[data-theme=light]{
+  color-scheme:light;
+  --bg:#eef0f3; --surface:#f8f9fa; --surface-2:#e8ebef; --line:#d8dce2; --line-strong:#b9c0ca;
+  --text:#16181d; --muted:#545b69; --faint:#a3a9b3;
+  --accent:#e39a2c; --accent-ink:#1b1306; --accent-soft:rgba(227,154,44,.16);
+  --rec:#cf3a3f; --stage:#101114;
+  --wave:#3a404b; --played:#b4bac4;
+  --accent-strong:#9a5b00; --track:#7f8794; --shadow:rgba(0,0,0,.35);
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
@@ -44,7 +57,8 @@ body{background:var(--bg);color:var(--text);font:16px/1.5 var(--font);display:gr
   overflow:hidden;user-select:none;-webkit-font-smoothing:antialiased}
 svg.i{width:18px;height:18px;flex:none;display:block}
 .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:focus-visible{outline:2px solid var(--accent-strong);outline-offset:2px}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 
 /* 按鈕：一組主要 + 次要，44px */
 .btn{font:inherit;font-size:16px;font-weight:500;color:var(--text);background:var(--surface-2);border:1px solid var(--line-strong);border-radius:var(--r-sm);
@@ -61,7 +75,7 @@ svg.i{width:18px;height:18px;flex:none;display:block}
 /* 頂列 */
 header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(max-content,1fr);align-items:center;gap:18px;padding:0 16px;height:72px;background:var(--surface);border-bottom:1px solid var(--line);min-width:0}
 .brand{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:600;letter-spacing:-.01em;white-space:nowrap;margin:0}
-.brand svg{color:var(--accent);width:20px;height:20px}
+.brand svg{color:var(--accent-strong);width:20px;height:20px}
 .left{display:flex;align-items:center;gap:18px;min-width:0}
 .file{display:flex;align-items:center;gap:10px;min-width:0}
 #fname{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
@@ -71,16 +85,16 @@ header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(max-content,
 #clock{font-size:16px;color:var(--text)}
 #clock .dur{color:var(--muted)}
 #meter{position:absolute;left:0;top:100%;margin-top:3px;font-size:13px;color:var(--muted)}   /* 掛在時間下方，不影響時間的垂直置中 */
-#meter.rec{color:var(--rec)} #meter.busy{color:var(--accent)}
+#meter.rec{color:var(--rec)} #meter.busy{color:var(--accent-strong)}
 .controls{display:flex;align-items:center;gap:16px;justify-content:flex-end}
 .ctl{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:500;white-space:nowrap}
 .ctl output{color:var(--text);min-width:48px;font-size:13px}
-input[type=range]{width:110px;accent-color:var(--accent)}
+input[type=range]{width:110px;height:44px;margin:0;accent-color:var(--accent);cursor:pointer}
 /* 開關：滑 16px，按住時拉長 4px（只用 transform） */
 .switch{position:relative;width:38px;height:22px;flex:none}
-.switch input{position:absolute;inset:0;opacity:0;margin:0;cursor:pointer}
+.switch input{position:absolute;left:-3px;top:-11px;width:44px;height:44px;opacity:0;margin:0;cursor:pointer}   /* 看起來 38×22，可點範圍 44×44 */
 .switch input:disabled{cursor:default}
-.switch span{position:absolute;inset:0;border-radius:999px;background:var(--line-strong);transition:background-color 180ms var(--ease);pointer-events:none}
+.switch span{position:absolute;inset:0;border-radius:999px;background:var(--track);transition:background-color 180ms var(--ease);pointer-events:none}
 .switch span::after{content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:999px;background:var(--text);
   transform-origin:left center;transition:transform 180ms var(--ease)}
 .switch input:checked+span{background:var(--accent)}
@@ -88,13 +102,15 @@ input[type=range]{width:110px;accent-color:var(--accent)}
 .switch input:active:not(:disabled)+span::after{transform:scaleX(1.25);transition-duration:var(--m-press)}
 .switch input:checked:active:not(:disabled)+span::after{transform:translateX(16px) scaleX(1.25)}
 .switch input:disabled+span{opacity:.4}
-.switch input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px}
+.switch input:focus-visible+span{outline:2px solid var(--accent-strong);outline-offset:2px}
 /* 分段選擇：一個指示塊靠 transform 滑到選中的那格 */
 .seg{position:relative;display:inline-grid;grid-auto-flow:column;grid-auto-columns:58px;padding:3px;background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm)}
 .seg::before{content:"";position:absolute;top:3px;bottom:3px;left:3px;width:58px;border-radius:calc(var(--r-sm) - 3px);background:var(--text);
   transform:translateX(calc(var(--i,1) * 100%));transition:transform var(--m-slide) var(--ease-io)}
 .seg button{position:relative;font:inherit;font-size:13px;font-weight:500;color:var(--muted);background:transparent;border:0;height:36px;cursor:pointer;
   transition:color var(--m-in) var(--ease)}
+.seg button::after,.dl button::after{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}   /* 可點範圍補到 44px 高 */
+.dl button::after{top:-5px;bottom:-5px}
 .seg button:hover:not(:disabled){color:var(--text)}
 .seg button[aria-checked=true]{color:var(--surface)}
 .seg button:disabled{cursor:default}
@@ -106,6 +122,7 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 320px;min-height:0}
 #viewer{display:flex;flex-direction:column;min-width:0;min-height:0}
 #stage{flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;background:var(--stage)}
 #stage.hidden{display:none}
+.choice{display:flex;gap:10px}
 #stageCv{display:block}
 #empty{position:absolute;inset:0;display:grid;place-items:center;background:var(--bg)}
 .drop{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding:44px 52px;border:1px dashed var(--line-strong);border-radius:var(--r-md);
@@ -114,14 +131,15 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 320px;min-height:0}
 .drop h2{font-size:25px;font-weight:600;letter-spacing:-.02em;margin:0}
 .drop p{margin:0;color:var(--muted);font-size:16px;max-width:30ch}
 .drop .err{color:var(--rec)}
-body.dragover .drop{border-color:var(--accent);background:var(--accent-soft)}
-body.dragover .drop>svg{color:var(--accent)}
+body.dragover .drop{border-color:var(--accent-strong);background:var(--accent-soft)}
+body.dragover .drop>svg{color:var(--accent-strong)}
 .skel{width:220px;height:6px;border-radius:999px;background:linear-gradient(90deg,var(--surface-2) 0%,var(--line-strong) 50%,var(--surface-2) 100%);background-size:200% 100%}
 @media (prefers-reduced-motion: no-preference){ .skel{animation:sh 1.2s linear infinite} }
 @keyframes sh{to{background-position:-200% 0}}
 #scrubWrap{height:210px;position:relative;border-top:1px solid var(--line);cursor:grab;touch-action:none;background:var(--surface)}
 #scrubWrap.grow{flex:1;height:auto}
 #scrubWrap:active{cursor:grabbing}
+#scrubWrap:focus-visible{outline-offset:-2px}
 #scrubCv,#ovCv{display:block;width:100%;height:100%}
 #ovWrap{height:52px;border-top:1px solid var(--line);cursor:pointer;touch-action:none;background:var(--bg)}
 
@@ -138,7 +156,7 @@ body.dragover .drop>svg{color:var(--accent)}
 .none{color:var(--muted);font-size:16px;padding:2px 2px;line-height:1.65}
 kbd{font-family:var(--mono);font-size:13px;color:var(--text);border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:5px;padding:0 6px}
 .take{background:var(--bg);border:1px solid var(--line);border-radius:var(--r-md);padding:12px;transition:border-color var(--m-in) var(--ease)}
-.take.active{border-color:var(--accent)}
+.take.active{border-color:var(--accent-strong)}
 .take .hd{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;gap:8px}
 .take .hd b{font-weight:600;font-size:16px}
 .take .hd span{color:var(--muted);font-size:13px}
@@ -149,25 +167,52 @@ kbd{font-family:var(--mono);font-size:13px;color:var(--text);border:1px solid va
 .dl{display:flex;align-items:center;flex:1;height:var(--btn-h);padding:0 4px 0 12px;gap:2px;border:1px solid var(--line);border-radius:var(--r-sm);color:var(--muted)}
 .dl>span{font-size:13px;font-weight:500;margin-right:auto;display:flex;align-items:center;gap:6px}
 .dl>span svg{width:16px;height:16px}
-.dl button{font:inherit;font-size:13px;font-weight:500;color:var(--text);background:transparent;border:0;border-radius:calc(var(--r-sm) - 3px);height:34px;padding:0 10px;cursor:pointer;
+.dl button{position:relative;font:inherit;font-size:13px;font-weight:500;color:var(--text);background:transparent;border:0;border-radius:calc(var(--r-sm) - 3px);height:34px;padding:0 10px;cursor:pointer;
   transition:background-color var(--m-out) var(--ease),transform var(--m-out) var(--ease)}
 .dl button:hover:not(:disabled){background:var(--surface-2);transition-duration:var(--m-in)}
 .dl button:active:not(:disabled){transform:scale(.985);transition-duration:var(--m-press)}
 .dl button:disabled{opacity:.5;cursor:default}
 
-footer{display:flex;gap:20px;align-items:center;padding:0 16px;height:36px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);background:var(--surface);white-space:nowrap;overflow:hidden}
+footer{display:flex;gap:20px;align-items:center;padding:0 16px;height:45px;color:var(--muted);font-size:13px;border-top:1px solid var(--line);background:var(--surface);white-space:nowrap;overflow:hidden}
 footer kbd{margin-right:6px}
-#status{margin-left:auto;color:var(--text)}
+#status{margin-left:auto;color:var(--text);overflow:hidden;text-overflow:ellipsis}
+.textbtn{font:inherit;font-size:13px;color:var(--muted);background:transparent;border:0;border-radius:var(--r-sm);align-self:stretch;padding:0 8px;cursor:pointer;flex:none;
+  transition:color var(--m-in) var(--ease),background-color var(--m-in) var(--ease)}
+.textbtn:hover{color:var(--text);background:var(--surface-2)}
 /* 拖曳時鎖定滑鼠，畫一個替身游標；超出視窗左右邊緣會從另一邊繞回來（像 Blender） */
 #ghost{position:fixed;left:0;top:0;width:22px;height:22px;margin:-11px 0 0 -11px;pointer-events:none;display:none;color:var(--text);
-  filter:drop-shadow(0 1px 1px rgba(0,0,0,.6));z-index:10}
+  filter:drop-shadow(0 1px 1px var(--shadow));z-index:10}
 #ghost svg{width:22px;height:22px}
 body.locked #ghost{display:block}
 #vid,.hiddenVid{position:absolute;width:2px;height:2px;opacity:0;pointer-events:none;left:0;top:0}
 
 @media (max-width:1560px){ .brand span{display:none} }
-@media (max-width:1280px){ .ctl .lbl{display:none} }
+/* 一列放不下時：上排拆成兩列，控制項可以換行，文字標籤保留 */
+@media (max-width:1320px){
+  header{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"left transport" "controls controls";height:auto;padding:12px 16px;row-gap:10px}
+  .left{grid-area:left} .transport{grid-area:transport}
+  .controls{grid-area:controls;justify-content:flex-start;flex-wrap:wrap;column-gap:28px;row-gap:6px}
+  #recBtn{margin-left:auto}
+  .clock{display:flex;flex-direction:column;justify-content:center;min-width:0}
+  #meter{position:static;margin:0}
+  #meter:empty{display:none}
+}
 @media (max-width:1040px){ main{grid-template-columns:minmax(0,1fr) 280px} }
+/* 窄螢幕，或桌機放大到 200%：改成單欄，整頁可以捲動 */
+@media (max-width:820px){
+  html,body{height:auto}
+  body{display:block;overflow:auto;min-height:100dvh}
+  main,#viewer{display:block}
+  #stage{aspect-ratio:var(--ar,16/9)}
+  #stage.is-empty{aspect-ratio:auto;min-height:320px}
+  #scrubWrap,#scrubWrap.grow{height:200px}
+  #side{border-left:0;border-top:1px solid var(--line)}
+  #takes{overflow:visible}
+  .drop{padding:32px 24px;margin:0 16px}
+}
+@media (max-width:820px) and (min-height:700px){ header{position:sticky;top:0;z-index:5} }
+@media (max-width:560px){ #fname{display:none} #openBtn .t{display:none} #openBtn{width:var(--btn-h);padding:0} .controls{column-gap:16px} }
+@media (max-width:820px),(hover:none){ footer .hint{display:none} }   /* 窄螢幕或沒有鍵盤的裝置不顯示快捷鍵 */
 @media (prefers-reduced-motion: reduce){
   .btn,.dl button,.switch span::after,.seg::before{transition-property:background-color,color,border-color!important}
   .btn:hover:not(:disabled),.btn:active:not(:disabled),.dl button:active:not(:disabled){transform:none}
@@ -181,13 +226,13 @@ body.locked #ghost{display:block}
   <div class="left">
   <h1 class="brand"><svg class="i" aria-hidden="true"><use href="#i-waveform"/></svg><span>Scrub Stretch</span></h1>
   <div class="file">
-    <button class="btn" id="openBtn"><svg class="i" aria-hidden="true"><use href="#i-folder-open"/></svg>開啟檔案</button>
+    <button class="btn" id="openBtn" aria-label="開啟檔案"><svg class="i" aria-hidden="true"><use href="#i-folder-open"/></svg><span class="t">開啟檔案</span></button>
     <input type="file" id="fileIn" accept="audio/*,video/*,.mkv" hidden>
     <span id="fname">尚未載入檔案</span>
   </div>
   </div>
   <div class="transport">
-    <button class="btn" id="playBtn" disabled aria-label="播放" title="播放 / 暫停（空白鍵）"><svg class="i"><use href="#i-play-fill"/></svg></button>
+    <button class="btn" id="playBtn" disabled aria-label="播放" title="播放 / 暫停（空白鍵）"><svg class="i" aria-hidden="true"><use href="#i-play-fill"/></svg></button>
     <div class="clock"><div id="clock" class="mono">00:00.000 <span class="dur">/ 00:00.000</span></div><span id="meter" class="mono"></span></div>
   </div>
   <div class="controls">
@@ -198,13 +243,13 @@ body.locked #ghost{display:block}
       <div class="seg mono" id="grainSeg" role="radiogroup" aria-label="重播片段長度" style="--i:1">
         <button role="radio" data-v="1024" aria-checked="false">21ms</button><button role="radio" data-v="2048" aria-checked="true">43ms</button><button role="radio" data-v="4096" aria-checked="false">85ms</button>
       </div></div>
-    <button class="btn" id="recBtn" disabled title="錄製（R）"><svg class="i" aria-hidden="true"><use href="#i-record-fill"/></svg><span class="lbl2">錄製</span></button>
+    <button class="btn" id="recBtn" disabled title="錄製（R）"><svg class="i" aria-hidden="true"><use href="#i-record-fill"/></svg><span>錄製</span></button>
   </div>
 </header>
 <main>
   <section id="viewer">
-    <div id="stage">
-      <canvas id="stageCv"></canvas>
+    <div id="stage" class="is-empty">
+      <canvas id="stageCv" role="img" aria-label="影片畫面"></canvas>
       <div id="empty"><div class="drop" id="drop">
         <svg class="i" aria-hidden="true"><use href="#i-waveform"/></svg>
         <h2>拖入音訊或影片</h2>
@@ -212,8 +257,8 @@ body.locked #ghost{display:block}
         <button class="btn primary" id="pickBtn">選擇檔案</button>
       </div></div>
     </div>
-    <div id="scrubWrap"><canvas id="scrubCv"></canvas></div>
-    <div id="ovWrap"><canvas id="ovCv"></canvas></div>
+    <div id="scrubWrap" tabindex="0" role="slider" aria-label="播放位置" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="尚未載入檔案" aria-disabled="true"><canvas id="scrubCv" aria-hidden="true"></canvas></div>
+    <div id="ovWrap" aria-hidden="true"><canvas id="ovCv"></canvas></div>
   </section>
   <aside id="side">
     <div class="side-hd"><h2>音高</h2><div class="pitch"><span id="noteSub" class="mono"></span><span id="noteName" class="mono"></span></div></div>
@@ -224,9 +269,11 @@ body.locked #ghost{display:block}
   </aside>
 </main>
 <footer>
-  <span><kbd>Space</kbd>播放</span><span><kbd>R</kbd>錄製</span><span><kbd>←</kbd><kbd>→</kbd>跳 1 秒</span><span><kbd>滾輪</kbd>縮放</span><span><kbd>Esc</kbd>停止重播</span>
-  <span id="status"></span>
+  <span class="hint"><kbd>Space</kbd>播放</span><span class="hint"><kbd>R</kbd>錄製</span><span class="hint"><kbd>F</kbd>按住凍結</span><span class="hint"><kbd>←</kbd><kbd>→</kbd>跳 1 秒</span><span class="hint"><kbd>滾輪</kbd>縮放</span><span class="hint"><kbd>Esc</kbd>停止重播</span>
+  <span id="status" role="status" aria-live="polite"></span>
+  <button class="textbtn" id="themeBtn" title="切換外觀：跟隨系統、深色、淺色">外觀：跟隨系統</button>
 </footer>
+<div id="sr" class="sr-only" role="status" aria-live="polite"></div>
 <video id="vid" muted playsinline preload="auto"></video>
 <div id="ghost" aria-hidden="true"><svg class="i"><use href="#i-hand-grabbing-fill"/></svg></div>
 <script id="worklet" type="text/plain">
@@ -415,12 +462,13 @@ registerProcessor('scrub', ScrubProcessor);
 <script>
 'use strict';
 const $ = s => document.querySelector(s);
-const C = {};
+const C = {}; let themeV = 0, ovV = 0;      // themeV / ovV：顏色或總覽圖改變時遞增，讓畫面知道要重畫
 const icon = n => `<svg class="i" aria-hidden="true"><use href="#i-${n}"/></svg>`;
 function readTokens() {   // 畫布顏色跟著 CSS 變數（深色 / 淺色模式）
   const cs = getComputedStyle(document.documentElement);
-  for (const k of ['bg', 'surface', 'surface-2', 'line', 'line-strong', 'text', 'muted', 'faint', 'accent', 'accent-soft', 'wave', 'played'])
+  for (const k of ['bg', 'surface', 'surface-2', 'line', 'line-strong', 'text', 'muted', 'faint', 'accent', 'accent-strong', 'accent-soft', 'wave', 'played'])
     C[k.replace(/-(\w)/g, (_, c) => c.toUpperCase())] = cs.getPropertyValue('--' + k).trim();
+  themeV++;
 }
 readTokens();
 const BLK = 128;
@@ -428,7 +476,7 @@ const BLK = 128;
 const el = {
   open:$('#openBtn'), fileIn:$('#fileIn'), fname:$('#fname'), play:$('#playBtn'), speed:$('#speed'), speedOut:$('#speedOut'),
   freeze:$('#freeze'), pitch:$('#pitch'), grainSeg:$('#grainSeg'), rec:$('#recBtn'), stage:$('#stage'), stageCv:$('#stageCv'), empty:$('#empty'),
-  scrubWrap:$('#scrubWrap'), scrubCv:$('#scrubCv'), ghost:$('#ghost'), specCv:$('#specCv'), noteName:$('#noteName'), noteSub:$('#noteSub'), clock:$('#clock'), meter:$('#meter'), drop:$('#drop'), dropMsg:$('#dropMsg'), pick:$('#pickBtn'), ovWrap:$('#ovWrap'), ovCv:$('#ovCv'),
+  scrubWrap:$('#scrubWrap'), scrubCv:$('#scrubCv'), ghost:$('#ghost'), sr:$('#sr'), themeBtn:$('#themeBtn'), specCv:$('#specCv'), noteName:$('#noteName'), noteSub:$('#noteSub'), clock:$('#clock'), meter:$('#meter'), drop:$('#drop'), dropMsg:$('#dropMsg'), pick:$('#pickBtn'), ovWrap:$('#ovWrap'), ovCv:$('#ovCv'),
   takes:$('#takes'), importBtn:$('#importBtn'), jsonIn:$('#jsonIn'), status:$('#status'), vid:$('#vid'),
 };
 const sg = el.scrubCv.getContext('2d'), og = el.ovCv.getContext('2d'), stg = el.stageCv.getContext('2d'), spg = el.specCv.getContext('2d');
@@ -446,6 +494,7 @@ const takes = []; let takeSeq = 0;
 const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
 const fmt = t => { t = Math.max(0, t); const m = Math.floor(t / 60), s = t - m * 60; return String(m).padStart(2, '0') + ':' + s.toFixed(3).padStart(6, '0'); };
 const fmtShort = t => { const m = Math.floor(t / 60), s = t - m * 60; return m + ':' + s.toFixed(1).padStart(4, '0'); };
+function say(msg) { el.sr.textContent = ''; requestAnimationFrame(() => el.sr.textContent = msg); }   // 給螢幕報讀軟體的狀態通知
 function status(msg, ms = 2500) { el.status.textContent = msg; clearTimeout(status.t); if (ms) status.t = setTimeout(() => el.status.textContent = '', ms); }
 function download(blob, name) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); }
 const baseName = () => (fileName.replace(/\.[^.]+$/, '') || 'scrub');
@@ -470,14 +519,36 @@ const wake = () => { if (ctx && ctx.state !== 'running') ctx.resume(); };
 addEventListener('pointerdown', wake, true); addEventListener('keydown', wake, true);
 
 // ---------- 載入 ----------
+const FORMATS = 'mp3、wav、m4a、flac、mp4、webm、mov';
+const BIG_BYTES = 1e9;                     // 預估記憶體超過約 1GB 就先問
+function probeDuration(file, isVid) {      // 只讀檔頭拿長度，不解碼
+  return new Promise(res => {
+    const m = document.createElement(isVid ? 'video' : 'audio'), url = URL.createObjectURL(file);
+    let done = false;
+    const fin = d => { if (done) return; done = true; URL.revokeObjectURL(url); m.removeAttribute('src'); res(d); };
+    m.preload = 'metadata'; m.onloadedmetadata = () => fin(isFinite(m.duration) ? m.duration : 0); m.onerror = () => fin(0);
+    setTimeout(() => fin(0), 4000); m.src = url;
+  });
+}
+function confirmLarge(d, bytes) {
+  setEmpty('confirm', `長度 ${fmtShort(d)}，預估需要約 ${(bytes / 1e9).toFixed(1)} GB 記憶體，分頁可能會當掉。`);
+  return new Promise(res => { el.drop.querySelector('.choice').onclick = e => { const b = e.target.closest('button'); if (b) res(b.dataset.c === 'go'); }; });
+}
+function restoreView() { if (mono) { setEmpty('none'); el.stage.classList.toggle('hidden', !hasVideo); } else setEmpty('idle'); }
 async function loadFile(file) {
+  const prevVideo = hasVideo, prevName = fileName;
   try {
     await ensureCtx();
     if (recorder) stopRec();
     if (st.replaying) send({ t:'abortScript' });
+    if (st.dragging) endDrag();
+    if (!file.size) throw new Error('這個檔案是空的');
+    const isVid = (file.type || '').startsWith('video/') || /\.(mp4|webm|mov|mkv|m4v|avi)$/i.test(file.name);
+    // 音訊在記憶體裡約有 6 份聲道拷貝（主執行緒 2 + 單聲道 1 + 引擎 3），以立體聲估算
+    const d0 = await probeDuration(file, isVid), est = d0 * sr * 4 * 6;
+    if (est > BIG_BYTES && !(await confirmLarge(d0, est))) { restoreView(); return; }
     setEmpty('loading', file.name);
-    fileName = file.name;
-    hasVideo = (file.type || '').startsWith('video/') || /\.(mp4|webm|mov|mkv|m4v|avi)$/i.test(file.name);
+    fileName = file.name; hasVideo = isVid;
     let buf = null;
     try { buf = await ctx.decodeAudioData(await file.arrayBuffer()); }
     catch (e) { if (!hasVideo) throw new Error('無法解碼這個音訊格式'); }
@@ -505,23 +576,27 @@ async function loadFile(file) {
     layout(); buildOverview(); updUI();
     if (hasVideo) startScan(el.vid.src); else stopScan();
     if (!el.status.textContent.startsWith('影片沒有')) status('');
-  } catch (e) { console.error(e); if (!mono) setEmpty('error', e.message); else { setEmpty('none'); status('載入失敗：' + e.message, 6000); } }
-}
-function setEmpty(state, info) {
-  if (state === 'none') { el.empty.style.display = 'none'; return; }
-  el.empty.style.display = ''; el.stage.classList.remove('hidden');
-  const h = el.drop.querySelector('h2');
-  if (state === 'loading') {
-    h.textContent = '解碼中';
-    el.dropMsg.className = ''; el.dropMsg.textContent = info;
-    el.pick.style.display = 'none';
-    if (!el.drop.querySelector('.skel')) el.dropMsg.insertAdjacentHTML('afterend', '<div class="skel"></div>');
-  } else {
-    el.drop.querySelector('.skel')?.remove(); el.pick.style.display = '';
-    h.textContent = state === 'error' ? '無法開啟這個檔案' : '拖入音訊或影片';
-    el.dropMsg.className = state === 'error' ? 'err' : '';
-    el.dropMsg.textContent = state === 'error' ? info + '。換一個檔案再試一次。' : 'mp3、wav、m4a、flac、mp4、webm、mov';
+    el.scrubWrap.setAttribute('aria-valuemax', dur.toFixed(2)); el.scrubWrap.setAttribute('aria-disabled', 'false');
+    say(`已載入 ${file.name}，長度 ${fmtShort(dur)}`);
+  } catch (e) {
+    console.error(e);
+    if (!mono) setEmpty('error', e.message);
+    else { hasVideo = prevVideo; fileName = prevName; restoreView(); status('載入失敗：' + e.message, 6000); }   // 原本的檔案還在，還原畫面
   }
+}
+function setEmpty(state, info) {            // state：none / idle / loading / confirm / error
+  const h = el.drop.querySelector('h2'), err = state === 'error', busy = state === 'loading' || state === 'confirm';
+  el.stage.classList.toggle('is-empty', state !== 'none');
+  el.drop.querySelector('.skel')?.remove(); el.drop.querySelector('.choice')?.remove();
+  el.empty.style.display = state === 'none' ? 'none' : '';
+  if (state !== 'none') el.stage.classList.remove('hidden');
+  el.pick.style.display = busy ? 'none' : '';
+  el.dropMsg.className = err ? 'err' : '';
+  err ? el.dropMsg.setAttribute('role', 'alert') : el.dropMsg.removeAttribute('role');
+  h.textContent = { loading: '解碼中', confirm: '這個檔案很長', error: '無法開啟這個檔案' }[state] || '拖入音訊或影片';
+  el.dropMsg.textContent = err ? info + '。換一個檔案再試一次。' : busy ? info : FORMATS;
+  if (state === 'loading') el.dropMsg.insertAdjacentHTML('afterend', '<div class="skel"></div>');
+  if (state === 'confirm') el.dropMsg.insertAdjacentHTML('afterend', '<div class="choice"><button class="btn" data-c="cancel">取消</button><button class="btn" data-c="go">仍要載入</button></div>');
 }
 
 function buildPeaks() {
@@ -553,7 +628,7 @@ function onWorklet(e) {
   if (d.t === 'pos') { st.pos = d.pos / sr; st.posT = performance.now(); st.wmode = d.mode; st.wrate = d.rate; }
   else if (d.t === 'ended') { st.playing = false; updUI(); }
   else if (d.t === 'script') { scriptResolve && scriptResolve(d.script); scriptResolve = null; }
-  else if (d.t === 'scriptEnd') { st.replaying = null; st.playing = false; send({ t:'pitch', on: el.pitch.checked }); send({ t:'freeze', on: el.freeze.checked }); send({ t:'rate', rate: st.rate }); renderTakes(); updUI(); }
+  else if (d.t === 'scriptEnd') { if (st.replaying) say('重播結束'); st.replaying = null; st.playing = false; send({ t:'pitch', on: el.pitch.checked }); send({ t:'freeze', on: el.freeze.checked }); send({ t:'rate', rate: st.rate }); renderTakes(); updUI(); }
 }
 
 // ---------- 播放控制 ----------
@@ -585,7 +660,13 @@ function syncPitchUI() {   // 變調模式下停住本來就沒聲音，凍結�
 }
 el.pitch.onchange = () => { syncPitchUI(); send({ t:'pitch', on: el.pitch.checked }); };
 function labelGrain() { for (const b of el.grainSeg.children) b.textContent = Math.round(+b.dataset.v / sr * 1000) + 'ms'; }
-function markGrain() { [...el.grainSeg.children].forEach((b, i) => { const on = +b.dataset.v === N; b.setAttribute('aria-checked', String(on)); if (on) el.grainSeg.style.setProperty('--i', i); }); }
+function markGrain() { [...el.grainSeg.children].forEach((b, i) => { const on = +b.dataset.v === N; b.setAttribute('aria-checked', String(on)); b.tabIndex = on ? 0 : -1; if (on) el.grainSeg.style.setProperty('--i', i); }); }
+el.grainSeg.addEventListener('keydown', e => {      // 方向鍵在選項間移動，Tab 只停在選中的那一格
+  const d = e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : e.key === 'ArrowLeft' || e.key === 'ArrowUp' ? -1 : 0;
+  if (!d) return;
+  const bs = [...el.grainSeg.children], i = bs.indexOf(document.activeElement), b = bs[(i + d + bs.length) % bs.length];
+  e.preventDefault(); if (b && !b.disabled) { b.click(); b.focus(); }
+});
 el.grainSeg.onclick = e => {
   const b = e.target.closest('button'); if (!b || b.disabled || +b.dataset.v === N) return;
   N = +b.dataset.v; markGrain();
@@ -612,7 +693,7 @@ function startDrag(e, kind) {
   send({ t:'mode', mode:'scrub' });
 }
 function moveDrag(e) {
-  if (!st.dragging) return;
+  if (!st.dragging || drag.kind === 'kbd') return;
   let t;
   if (drag.kind === 'abs') { const r = el.ovCv.getBoundingClientRect(); t = clamp((e.clientX - r.left) / r.width, 0, 1) * dur; }
   else {
@@ -660,8 +741,8 @@ function endDrag() {
 for (const [w, kind] of [[el.scrubWrap, 'rel'], [el.ovWrap, 'abs']]) {
   w.addEventListener('pointerdown', e => startDrag(e, kind));
   w.addEventListener('pointermove', moveDrag);
-  w.addEventListener('pointerup', endDrag);
-  w.addEventListener('pointercancel', endDrag);
+  w.addEventListener('pointerup', () => { if (drag.kind !== 'kbd') endDrag(); });
+  w.addEventListener('pointercancel', () => { if (drag.kind !== 'kbd') endDrag(); });
 }
 el.scrubWrap.addEventListener('wheel', e => { e.preventDefault(); zoom = clamp(zoom * Math.exp(e.deltaY * 0.0015), 0.25, Math.max(0.25, Math.min(60, dur * 1.2))); }, { passive: false });
 
@@ -691,15 +772,27 @@ function layout() {
     let vw = el.vid.videoWidth, vh = el.vid.videoHeight;
     if (vw > 1920) { vh = Math.round(vh * 1920 / vw); vw = 1920; }
     vw -= vw % 2; vh -= vh % 2;
-    if (el.stageCv.width !== vw || el.stageCv.height !== vh) { el.stageCv.width = vw; el.stageCv.height = vh; }
+    if (el.stageCv.width !== vw || el.stageCv.height !== vh) { el.stageCv.width = vw; el.stageCv.height = vh; fc.painted = null; }
+    el.stage.style.setProperty('--ar', vw + '/' + vh);   // 窄螢幕版面用影片的長寬比
     const b = el.stage.getBoundingClientRect(), s = Math.min(b.width / vw, b.height / vh);
     el.stageCv.style.width = vw * s + 'px'; el.stageCv.style.height = vh * s + 'px';
   }
 }
 addEventListener('resize', () => { layout(); buildOverview(); });
-matchMedia('(prefers-color-scheme: light)').addEventListener('change', () => { readTokens(); buildOverview(); loop.blank = false; an.settle = 2; renderTakes(); });
+function onThemeChange() { readTokens(); buildOverview(); loop.blank = false; an.settle = 2; renderTakes(); }
+matchMedia('(prefers-color-scheme: light)').addEventListener('change', onThemeChange);
+const THEME_LABEL = { auto: '跟隨系統', dark: '深色', light: '淺色' };
+let theme = document.documentElement.dataset.theme || 'auto';
+function applyTheme() {
+  if (theme === 'auto') delete document.documentElement.dataset.theme; else document.documentElement.dataset.theme = theme;
+  el.themeBtn.textContent = '外觀：' + THEME_LABEL[theme];
+  try { theme === 'auto' ? localStorage.removeItem('theme') : localStorage.setItem('theme', theme); } catch {}
+  onThemeChange();
+}
+el.themeBtn.onclick = () => { theme = { auto: 'dark', dark: 'light', light: 'auto' }[theme]; applyTheme(); };
 
 function buildOverview() {
+  ovV++;
   const W = el.ovCv.width, H = el.ovCv.height;
   ovImg = document.createElement('canvas'); ovImg.width = W; ovImg.height = H;
   const g = ovImg.getContext('2d');
@@ -741,7 +834,7 @@ function drawScrub(p) {
   g.fillStyle = C.wave;
   for (let x = half; x < W; x++) if (range(s0 + x * spp, s0 + (x + 1) * spp)) g.fillRect(x, mid - RMX * A, 1, Math.max(1, (RMX - RMN) * A));
   // playhead
-  g.fillStyle = C.accent; g.fillRect(half - d, top - 6 * d, 2 * d, H);
+  g.fillStyle = C.accentStrong; g.fillRect(half - d, top - 6 * d, 2 * d, H);
   g.beginPath(); g.moveTo(half - 6 * d, top - 8 * d); g.lineTo(half + 6 * d, top - 8 * d); g.lineTo(half, top); g.fill();
 }
 
@@ -751,19 +844,19 @@ function drawOverview(p) {
   if (!mono) return;
   const x0 = (p - zoom / 2) / dur * W, x1 = (p + zoom / 2) / dur * W;
   og.fillStyle = C.accentSoft; og.fillRect(x0, 0, x1 - x0, H);
-  og.fillStyle = C.accent; og.fillRect(Math.round(p / dur * W) - d, 0, 2 * d, H);
+  og.fillStyle = C.accentStrong; og.fillRect(Math.round(p / dur * W) - d, 0, 2 * d, H);
 }
 
 // ---------- 影格快取 ----------
 // <video> 每次 seek 都要從前一個關鍵影格解碼，拖動時會卡。所以載入後用第二個隱藏的 video
 // 以 2 倍速跑一遍，用 requestVideoFrameCallback 抓下每一格存成 JPEG；拖動時直接畫快取，
 // 停住後真正的 video seek 到位再換回原解析度畫面。
-const fc = { list: [], token: 0, vid: null, done: false, minDt: 1 / 30, pending: 0, lru: new Map(), scanT: 0, stats: { real: 0, cache: 0, hold: 0 } };
+const fc = { list: [], token: 0, vid: null, done: false, minDt: 1 / 30, pending: 0, lru: new Map(), scanT: 0, painted: null };
 function stopScan() {
   fc.token++;
   if (fc.vid) { fc.vid.pause(); fc.vid.removeAttribute('src'); fc.vid.load(); fc.vid.remove(); fc.vid = null; }
   for (const b of fc.lru.values()) b.close();
-  fc.lru.clear(); fc.list = []; fc.done = false; fc.pending = 0; fc.scanT = 0; fc.minDt = 1 / 30;
+  fc.lru.clear(); fc.list = []; fc.done = false; fc.pending = 0; fc.scanT = 0; fc.minDt = 1 / 30; fc.painted = null;
 }
 function fcInsert(e) {
   const L = fc.list;
@@ -869,14 +962,16 @@ function drawStage(p) {
   const realOk = v.readyState >= 2 && !v.seeking && Math.abs(v.currentTime - p) <= Math.max(0.02, fc.minDt * 0.75);
   const i = playing ? -1 : fcFind(p);
   syncVideo(p, i >= 0);
-  if (playing || realOk) { if (v.readyState >= 2) { stg.drawImage(v, 0, 0, W, H); fc.stats.real++; } return; }
+  // 同一個畫面來源不重複畫（錄製中例外：canvas 串流要持續有畫面）
+  const paint = (id, img) => { if (id === fc.painted && !recorder) return; fc.painted = id; stg.drawImage(img, 0, 0, W, H); };
+  if (playing || realOk) { if (v.readyState >= 2) paint('v' + v.currentTime, v); return; }
   if (i >= 0) {
     for (let k = 1; k <= 4; k++) { fcBitmap(i + k); fcBitmap(i - k); }   // 預先解碼前後幾格
     const b = fcBitmap(i);
-    if (b) { stg.drawImage(b, 0, 0, W, H); fc.stats.cache++; } else fc.stats.hold++;
+    if (b) paint('c' + i, b);
     return;
   }
-  if (v.readyState >= 2) { stg.drawImage(v, 0, 0, W, H); fc.stats.hold++; }
+  if (v.readyState >= 2) paint('v' + v.currentTime, v);
 }
 
 // ---------- 音高與頻譜 ----------
@@ -986,7 +1081,7 @@ function drawSpectrum() {
     g.fillStyle = C.line; g.fillRect(x, 0, 1, H);
     g.fillStyle = C.muted; g.fillText('C' + oct, x + 4 * d, 4 * d);
   }
-  if (an.f0 >= fMin && an.f0 <= fMax) { g.fillStyle = C.accent; g.fillRect(Math.round(xOf(an.f0)) - d / 2, top, Math.max(1, d), H - top); }
+  if (an.f0 >= fMin && an.f0 <= fMax) { g.fillStyle = C.accentStrong; g.fillRect(Math.round(xOf(an.f0)) - d / 2, top, Math.max(1, d), H - top); }
 }
 
 function analyze(p) {
@@ -1007,7 +1102,12 @@ function loop() {
   if (!mono) { if (!loop.blank) { drawScrub(0); loop.blank = true; } return; }
   loop.blank = false;
   const p = estPos();
-  drawScrub(p); drawOverview(p); analyze(p);
+  // 位置、縮放、尺寸、顏色都沒變就不重畫（錄製中例外）
+  const key = p + '|' + zoom + '|' + el.scrubCv.width + 'x' + el.scrubCv.height + '|' + themeV + '|' + ovV;
+  if (key !== loop.key || recorder) { loop.key = key; drawScrub(p); drawOverview(p); }
+  analyze(p);
+  const av = Math.round(p * 10) / 10;       // 刷動區的滑桿數值，每 0.1 秒更新一次
+  if (av !== loop.av) { loop.av = av; el.scrubWrap.setAttribute('aria-valuenow', av); el.scrubWrap.setAttribute('aria-valuetext', `${fmtShort(p)}，全長 ${fmtShort(dur)}`); }
   if (hasVideo) drawStage(p);
   const ct = fmt(p);
   if (ct !== loop.ct) { loop.ct = ct; el.clock.firstChild.nodeValue = ct + ' '; }
@@ -1026,11 +1126,16 @@ function pickMime() {
 }
 function startRec() {
   if (!node || st.replaying || recorder) return;
-  const cv = hasVideo ? el.stageCv : el.scrubCv;
-  const vs = cv.captureStream(30);
-  recStream = new MediaStream([...vs.getVideoTracks(), ...recDest.stream.getAudioTracks()]);
-  const mimeType = pickMime();
-  recorder = new MediaRecorder(recStream, { mimeType, videoBitsPerSecond: 8e6, audioBitsPerSecond: 256000 });
+  const cv = hasVideo ? el.stageCv : el.scrubCv, mimeType = pickMime();
+  try {
+    const vs = cv.captureStream(30);
+    recStream = new MediaStream([...vs.getVideoTracks(), ...recDest.stream.getAudioTracks()]);
+    recorder = new MediaRecorder(recStream, { mimeType, videoBitsPerSecond: 8e6, audioBitsPerSecond: 256000 });
+  } catch (e) {                              // 瀏覽器不能錄影：照樣記錄操作，之後仍可重播與匯出 WAV
+    console.error(e); recStream = null;
+    recorder = { mimeType: '', start() {}, stop() { this.onstop && this.onstop(); } };
+    status('這個瀏覽器不支援錄影，這段只會記錄操作', 5000);
+  }
   recChunks = [];
   recorder.ondataavailable = e => { if (e.data.size) recChunks.push(e.data); };
   const stopped = new Promise(r => recorder.onstop = r);
@@ -1038,21 +1143,21 @@ function startRec() {
   const rec = recorder;
   Promise.all([stopped, scriptP]).then(([, script]) => {
     const type = rec.mimeType || mimeType || 'video/webm';
-    addTake({ script, sr, N, fileName, dur, blob: new Blob(recChunks, { type }) });
+    addTake({ script, sr, N, fileName, dur, blob: recChunks.length ? new Blob(recChunks, { type }) : null });
   });
   recorder.start(500);
   send({ t:'rec', on:true });
   recT0 = performance.now();
-  el.rec.classList.add('on'); el.rec.innerHTML = icon('stop') + '<span class="lbl2">停止錄製</span>';
+  el.rec.innerHTML = icon('stop') + '<span>停止錄製</span>'; say('開始錄製');
   updUI();
 }
 function stopRec() {
   if (!recorder) return;
   send({ t:'rec', on:false });
   recorder.stop();
-  recStream.getVideoTracks().forEach(t => t.stop());
+  if (recStream) recStream.getVideoTracks().forEach(t => t.stop());
   recorder = null;
-  el.rec.classList.remove('on'); el.rec.innerHTML = icon('record-fill') + '<span class="lbl2">錄製</span>';
+  el.rec.innerHTML = icon('record-fill') + '<span>錄製</span>';
   updUI();
 }
 el.rec.onclick = () => recorder ? stopRec() : startRec();
@@ -1062,6 +1167,7 @@ function addTake(t) {
   t.id = ++takeSeq; t.name = 'Take ' + t.id;
   t.frames = t.script.length ? t.script[t.script.length - 1].f : 0;
   takes.unshift(t); renderTakes();
+  say(`已新增 ${t.name}，長度 ${fmtShort(t.frames / t.sr)}`);
 }
 function trajectory(t) {
   // 由事件模擬 playhead：回傳 [秒, 位置秒] 折線
@@ -1087,7 +1193,7 @@ function drawTraj(cv, t) {
   const g = cv.getContext('2d'), W = cv.width, H = cv.height, pts = trajectory(t);
   const F = Math.max(1, t.frames), L = Math.max(1, t.dur * t.sr), pad = 4 * d;
   g.fillStyle = C.surface; g.fillRect(0, 0, W, H);
-  g.strokeStyle = C.accent; g.lineWidth = 1.5 * d; g.lineJoin = 'round'; g.beginPath();
+  g.strokeStyle = C.accentStrong; g.lineWidth = 1.5 * d; g.lineJoin = 'round'; g.beginPath();
   pts.forEach(([f, p], i) => { const x = f / F * W, y = H - pad - p / L * (H - 2 * pad); i ? g.lineTo(x, y) : g.moveTo(x, y); });
   g.stroke();
 }
@@ -1098,7 +1204,7 @@ function renderTakes() {
     const div = document.createElement('div'); div.className = 'take' + (st.replaying === t ? ' active' : '');
     const ext = t.blob ? (t.blob.type.includes('mp4') ? 'mp4' : 'webm') : '';
     div.innerHTML = `<div class="hd"><b>${t.name}</b><span class="mono">${fmtShort(t.frames / t.sr)}s</span></div>
-      <canvas title="軌跡：橫軸是錄製時間，縱軸是 playhead 在原檔裡的位置"></canvas>
+      <canvas role="img" aria-label="${t.name} 的拖移軌跡" title="軌跡：橫軸是錄製時間，縱軸是 playhead 在原檔裡的位置"></canvas>
       <div class="btns">
         <div class="row">
           <button class="btn" data-a="replay" title="重播這段操作">${st.replaying === t ? icon('stop') + '停止重播' : icon('arrow-counter-clockwise') + '重播'}</button>
@@ -1129,7 +1235,7 @@ function replay(t) {
   if (t.N !== N) { N = t.N; markGrain(); buildNode(st.pos * sr); }
   st.playing = false; st.replaying = t;
   send({ t:'script', script: t.script });
-  renderTakes(); updUI();
+  renderTakes(); updUI(); say('開始重播 ' + t.name);
 }
 async function exportWav(t, btn) {
   if (!checkTake(t)) return;
@@ -1179,19 +1285,49 @@ el.fileIn.onchange = () => { const f = el.fileIn.files[0]; el.fileIn.value = '';
 addEventListener('dragover', e => { e.preventDefault(); document.body.classList.add('dragover'); });
 addEventListener('dragleave', e => { if (!e.relatedTarget) document.body.classList.remove('dragover'); });
 addEventListener('drop', e => { e.preventDefault(); document.body.classList.remove('dragover'); const f = e.dataTransfer.files[0]; if (f) loadFile(f); });
+// 鍵盤刷動：和滑鼠拖曳共用同一套引擎狀態（drag.kind = 'kbd'）
+const kb = { hold: false, timer: 0 };
+function kbStart() {
+  if (!node || st.replaying) return false;
+  if (st.dragging) return drag.kind === 'kbd';
+  const now = estPos();
+  st.dragging = true; drag.kind = 'kbd'; st.dragTarget = now;
+  send({ t:'mode', mode:'scrub' });
+  return true;
+}
+function kbEnd() { clearTimeout(kb.timer); if (st.dragging && drag.kind === 'kbd' && !kb.hold) endDrag(); }
+function kbNudge(dt) {
+  if (!kbStart()) return;
+  const t = clamp(st.dragTarget + dt, 0, dur);
+  st.dragTarget = t; lastMoveT = performance.now(); send({ t:'target', pos: t * sr });
+  clearTimeout(kb.timer); kb.timer = setTimeout(kbEnd, 450);       // 放開按鍵 0.45 秒後結束刷動
+}
 addEventListener('keydown', e => {
-  if (e.target.tagName === 'INPUT' && e.target.type !== 'range' && e.target.type !== 'checkbox') return;
-  if (e.code === 'Space') { e.preventDefault(); togglePlay(); }
+  const t = e.target, tag = t.tagName;
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if ((tag === 'INPUT' && t.type !== 'range' && t.type !== 'checkbox') || tag === 'TEXTAREA' || t.isContentEditable) return;
+  // 焦點在按鈕、開關、滑桿、選項上時，空白鍵和方向鍵留給那個控制項自己用
+  const onSlider = t === el.scrubWrap, onControl = !onSlider && !!(t.closest && t.closest('button, input, select, a, [role=radio]'));
+  if (onSlider && node && !st.replaying) {   // 刷動區：方向鍵細刷（聽得到聲音），Shift 加大十倍，PageUp/Down 跳 5 秒
+    const fine = zoom / 100, k = e.code;
+    const dt = k === 'ArrowLeft' || k === 'ArrowDown' ? -fine : k === 'ArrowRight' || k === 'ArrowUp' ? fine : k === 'PageDown' ? -5 : k === 'PageUp' ? 5 : 0;
+    if (dt) { e.preventDefault(); kbNudge(Math.abs(dt) < 5 && e.shiftKey ? dt * 10 : dt); return; }
+    if (k === 'Home' || k === 'End') { e.preventDefault(); kbEnd(); seek(k === 'Home' ? 0 : dur); return; }
+  }
+  if (e.code === 'Space') { if (onControl) return; e.preventDefault(); togglePlay(); }
   else if (e.code === 'KeyR') { recorder ? stopRec() : startRec(); }
+  else if (e.code === 'KeyF') { if (!e.repeat && !kb.hold && kbStart()) kb.hold = true; }   // 按住 F：凍結在目前位置
   else if (e.code === 'Escape' && st.replaying) send({ t:'abortScript' });
-  else if ((e.code === 'ArrowLeft' || e.code === 'ArrowRight') && node && !st.replaying && !st.dragging) {
+  else if ((e.code === 'ArrowLeft' || e.code === 'ArrowRight') && !onControl && node && !st.replaying && !st.dragging) {
     e.preventDefault(); seek(estPos() + (e.code === 'ArrowLeft' ? -1 : 1) * (e.shiftKey ? 5 : 1));
   }
 });
+addEventListener('keyup', e => { if (e.code === 'KeyF' && kb.hold) { kb.hold = false; kbEnd(); } });
+addEventListener('blur', () => { kb.hold = false; if (st.dragging) endDrag(); });   // 切走視窗時結束任何刷動
 el.vid.addEventListener('loadedmetadata', layout);
 
-window.app = { loadFile, st, takes, fc, an, detectPitch, noteOf, AW, get node() { return node; }, get ctx() { return ctx; }, encodeWav, get workletURL() { return workletURL; }, get channels() { return channels; } };
-layout(); renderTakes(); updUI(); loop();
+if (/[?&]debug\b/.test(location.search)) window.app = { loadFile, st, takes, fc, an, detectPitch, noteOf, AW, get node() { return node; }, get ctx() { return ctx; }, encodeWav, get workletURL() { return workletURL; }, get channels() { return channels; } };
+applyTheme(); markGrain(); layout(); renderTakes(); updUI(); loop();
 </script>
 </body>
 </html>
