@@ -89,6 +89,9 @@ header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(max-content,
 .controls{display:flex;align-items:center;gap:16px;justify-content:flex-end}
 .ctl{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px;font-weight:500;white-space:nowrap}
 .ctl output{color:var(--text);min-width:48px;font-size:13px}
+#volOut{min-width:64px}
+.ctl output.hot{color:var(--accent-strong)}   /* 音量超過檔案的最大值，會破音 */
+.btn[aria-pressed=true]{background:var(--accent-soft);border-color:var(--accent-strong)}
 input[type=range]{width:110px;height:44px;margin:0;accent-color:var(--accent);cursor:pointer}
 /* 開關：滑 16px，按住時拉長 4px（只用 transform） */
 .switch{position:relative;width:38px;height:22px;flex:none}
@@ -188,9 +191,9 @@ body.locked #ghost{display:block}
 #ghost.idle .open{display:block}
 #vid,.hiddenVid{position:absolute;width:2px;height:2px;opacity:0;pointer-events:none;left:0;top:0}
 
-@media (max-width:1560px){ .brand span{display:none} }
-/* 一列放不下時：上排拆成兩列，控制項可以換行，文字標籤保留 */
-@media (max-width:1320px){
+@media (max-width:1880px){ .brand span{display:none} }
+/* 一列放不下時（控制區約 1090px + 播放區 270px + 開檔鈕與檔名）：上排拆成兩列，控制項可以換行，文字標籤保留 */
+@media (max-width:1720px){
   header{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"left transport" "controls controls";height:auto;padding:12px 16px;row-gap:10px}
   .left{grid-area:left} .transport{grid-area:transport}
   .controls{grid-area:controls;justify-content:flex-start;flex-wrap:wrap;column-gap:28px;row-gap:6px}
@@ -239,6 +242,8 @@ body.locked #ghost{display:block}
   </div>
   <div class="controls">
     <label class="ctl"><span class="lbl">速度</span><input id="speed" type="range" min="0.1" max="2" step="0.05" value="1" aria-label="播放速度"><output id="speedOut" class="mono">1.00×</output></label>
+    <div class="ctl"><span class="lbl">音量</span><input id="vol" type="range" min="-30" max="30" step="0.5" value="0" aria-label="音量" aria-valuetext="0.0 dB" title="雙擊回到 0 dB"><output id="volOut" class="mono">0.0 dB</output>
+      <button class="btn" id="normBtn" disabled aria-pressed="false" title="把音量調到這個檔案不破音的最大值（最大聲的地方 -1 dB）。再按一次回到原本的音量">正規化</button></div>
     <label class="ctl" title="按住不動時，持續播放 playhead 那一瞬間的聲音"><span class="lbl">按住凍結</span><span class="switch"><input type="checkbox" id="freeze" checked aria-label="按住凍結"><span></span></span></label>
     <label class="ctl" title="開啟後像轉黑膠：速度越快音越高，倒著拖會倒放，停住就沒聲音"><span class="lbl">變調</span><span class="switch"><input type="checkbox" id="pitch" aria-label="變調"><span></span></span></label>
     <div class="ctl" title="按住凍結時重複播放的片段長度。越長越平順，越短越乾脆"><span class="lbl">重播片段</span>
@@ -303,6 +308,8 @@ class ScrubProcessor extends AudioWorkletProcessor {
     this.pos = o.pos || 0; this.target = this.pos;
     this.mode = 'stop'; this.rate = 1; this.freeze = true; this.still = 0;
     this.gain = 0; this.gk = 1 - Math.exp(-1 / (0.006 * sampleRate));
+    // 音量：volT 是目標倍率，vol 以約 20ms 追上去（滑桿是一格一格跳的，直接套用會有顆粒雜音）
+    this.vol = this.volT = this.cleanVol(o.vol); this.volK = 1 - Math.exp(-1 / (0.02 * sampleRate));
     // 變調（黑膠）模式：直接以 playhead 速度讀原音，兩級平滑讓速度連續；DC 阻隔讓停住時安靜
     this.vinyl = false; this.pendingPitch = null; this.t1 = this.pos; this.vk = 1 - Math.exp(-1 / (0.012 * sampleRate));
     this.dcx = new Float32Array(2); this.dcy = new Float32Array(2); this.dcR = 1 - 2 * Math.PI * 12 / sampleRate;
@@ -316,7 +323,7 @@ class ScrubProcessor extends AudioWorkletProcessor {
       if (d.on) {
         this.rec = { f0: this.frame, ev: [] };
         this.log({ t: 'init', pos: this.pos, target: this.target, mode: this.mode, rate: this.rate,
-                   freeze: this.freeze, gain: this.gain, prev: this.prevStart, vinyl: this.vinyl });
+                   freeze: this.freeze, gain: this.gain, prev: this.prevStart, vinyl: this.vinyl, vol: this.volT });
       } else if (this.rec) {
         this.log({ t: 'end' });
         this.port.postMessage({ t: 'script', script: this.rec.ev });
@@ -331,6 +338,7 @@ class ScrubProcessor extends AudioWorkletProcessor {
     if (this.rec) this.log(Object.assign({}, d));
   }
   log(d) { d.f = this.frame - this.rec.f0; this.rec.ev.push(d); }
+  cleanVol(v) { return typeof v === 'number' && v >= 0 && v <= 64 ? v : 1; }   // 紀錄檔可能是外來的：不合理的值一律當成原音量
   startScript(s) { this.script = s; this.si = 0; this.s0 = this.frame; }
   switchPitch(on) {
     this.vinyl = on; this.t1 = this.target = this.pos; this.pendingPitch = null;
@@ -340,7 +348,8 @@ class ScrubProcessor extends AudioWorkletProcessor {
   apply(d) {
     switch (d.t) {
       case 'init': this.pos = d.pos; this.target = d.target; this.mode = d.mode; this.rate = d.rate;
-                   this.freeze = d.freeze; this.gain = d.gain; this.prevStart = d.prev; this.vinyl = !!d.vinyl; this.t1 = this.pos; break;
+                   this.freeze = d.freeze; this.gain = d.gain; this.prevStart = d.prev; this.vinyl = !!d.vinyl; this.t1 = this.pos;
+                   this.vol = this.volT = this.cleanVol(d.vol); break;
       case 'mode': this.mode = d.mode; if (d.rate != null) this.rate = d.rate;
                    if (d.pos != null) this.pos = d.pos; this.target = this.t1 = this.pos; this.still = 0; break;
       case 'target': this.target = d.pos; break;
@@ -351,6 +360,7 @@ class ScrubProcessor extends AudioWorkletProcessor {
         else this.pendingPitch = !!d.on;
         break;
       case 'rate': this.rate = d.rate; break;
+      case 'vol': this.volT = this.cleanVol(d.v); break;
       case 'freeze': this.freeze = d.on; break;
       case 'end': this.mode = 'stop'; break;
     }
@@ -414,19 +424,21 @@ class ScrubProcessor extends AudioWorkletProcessor {
     const gt = (this.mode === 'stop' || quietStill || this.pendingPitch !== null) ? 0 : 1;
     if (gt === 0 && this.gain < 1e-4) {
       if (this.dirty) { for (const a of this.acc) a.fill(0); this.dirty = false; }
-      this.gain = 0; this.prevStart = null; this.untilGrain = 0;
+      this.gain = 0; this.prevStart = null; this.untilGrain = 0; this.vol = this.volT;
       this.frame += B; this.report(); return true;
     }
     if (this.untilGrain <= 0) { this.grain(); this.untilGrain += this.H; }
     const mask = this.RING - 1, nch = this.nch, oc = out.length, k = this.pendingPitch !== null ? this.gk * 4 : this.gk;
-    let rp = this.rp, g = this.gain;
+    const vt = this.volT, vk = this.volK;
+    let rp = this.rp, g = this.gain, v = this.vol;
     for (let i = 0; i < B; i++) {
-      g += (gt - g) * k;
-      for (let c = 0; c < oc; c++) out[c][i] = this.acc[c < nch ? c : 0][rp] * g;
+      g += (gt - g) * k; v += (vt - v) * vk;
+      const gv = g * v;
+      for (let c = 0; c < oc; c++) out[c][i] = this.acc[c < nch ? c : 0][rp] * gv;
       for (let c = 0; c < nch; c++) this.acc[c][rp] = 0;
       rp = (rp + 1) & mask;
     }
-    this.rp = rp; this.gain = g; this.untilGrain -= B; this.frame += B; this.report();
+    this.rp = rp; this.gain = g; this.vol = v; this.untilGrain -= B; this.frame += B; this.report();
     return true;
   }
 }
@@ -434,9 +446,10 @@ ScrubProcessor.prototype.processVinyl = function (out, B) {
   const len = this.len, P = this.PAD, nch = this.nch, oc = out.length, k = this.vk, R = this.dcR;
   const gk = this.pendingPitch !== null ? this.gk * 4 : this.gk;
   const gt = (this.mode === 'stop' || this.pendingPitch !== null) ? 0 : 1;
-  let pos = this.pos, t1 = this.t1, g = this.gain;
+  const vt = this.volT, vk = this.volK;
+  let pos = this.pos, t1 = this.t1, g = this.gain, v = this.vol;
   if (gt === 0 && g < 1e-4) {
-    this.gain = 0; this.t1 = this.target = pos; this.dcx.fill(0); this.dcy.fill(0);
+    this.gain = 0; this.vol = vt; this.t1 = this.target = pos; this.dcx.fill(0); this.dcy.fill(0);
     this.frame += B; this.report(); return true;
   }
   for (let i = 0; i < B; i++) {
@@ -445,17 +458,17 @@ ScrubProcessor.prototype.processVinyl = function (out, B) {
       if (pos >= len) { pos = len; this.mode = 'stop'; this.port.postMessage({ t: 'ended' }); }
       t1 = pos;
     } else if (this.mode === 'scrub') { t1 += (this.target - t1) * k; pos += (t1 - pos) * k; }
-    g += ((this.mode === 'stop' ? 0 : gt) - g) * gk;
+    g += ((this.mode === 'stop' ? 0 : gt) - g) * gk; v += (vt - v) * vk;
     const ip = Math.floor(pos), f = pos - ip, b = P + ip;
     for (let c = 0; c < oc; c++) {
       const s = this.src[c < nch ? c : 0], ch = c < 2 ? c : 1;
       const y0 = s[b - 1], y1 = s[b], y2 = s[b + 1], y3 = s[b + 2];   // 三次 Hermite 內插
       const x = y1 + 0.5 * f * (y2 - y0 + f * (2 * y0 - 5 * y1 + 4 * y2 - y3 + f * (3 * (y1 - y2) + y3 - y0)));
       const y = x - this.dcx[ch] + R * this.dcy[ch]; this.dcx[ch] = x; this.dcy[ch] = y;
-      out[c][i] = y * g;
+      out[c][i] = y * g * v;
     }
   }
-  this.pos = pos; this.t1 = t1; this.gain = g; this.frame += B; this.report();
+  this.pos = pos; this.t1 = t1; this.gain = g; this.vol = v; this.frame += B; this.report();
   return true;
 };
 registerProcessor('scrub', ScrubProcessor);
@@ -477,7 +490,7 @@ const BLK = 128;
 
 const el = {
   open:$('#openBtn'), fileIn:$('#fileIn'), fname:$('#fname'), play:$('#playBtn'), speed:$('#speed'), speedOut:$('#speedOut'),
-  freeze:$('#freeze'), pitch:$('#pitch'), grainSeg:$('#grainSeg'), rec:$('#recBtn'), stage:$('#stage'), stageCv:$('#stageCv'), empty:$('#empty'),
+  vol:$('#vol'), volOut:$('#volOut'), norm:$('#normBtn'), freeze:$('#freeze'), pitch:$('#pitch'), grainSeg:$('#grainSeg'), rec:$('#recBtn'), stage:$('#stage'), stageCv:$('#stageCv'), empty:$('#empty'),
   scrubWrap:$('#scrubWrap'), scrubCv:$('#scrubCv'), ghost:$('#ghost'), sr:$('#sr'), themeBtn:$('#themeBtn'), specCv:$('#specCv'), noteName:$('#noteName'), noteSub:$('#noteSub'), clock:$('#clock'), meter:$('#meter'), drop:$('#drop'), dropMsg:$('#dropMsg'), pick:$('#pickBtn'), ovWrap:$('#ovWrap'), ovCv:$('#ovCv'),
   takes:$('#takes'), importBtn:$('#importBtn'), jsonIn:$('#jsonIn'), status:$('#status'), vid:$('#vid'),
 };
@@ -492,7 +505,8 @@ const drag = { kind:null, x0:0, p0:0, acc:0, lastX:0, vx:0, vy:0 };
 // 滑鼠鎖定的狀態。瀏覽器在鎖定時會跳「按 Esc 顯示游標」的提示，網頁關不掉；但 Chromium 的規則是：
 // 提示完整顯示到自己消失一次之後，網頁自己解除再鎖定就不會再跳（primed）。
 // 所以第一次鎖定會保持到提示消失才解除；使用者按 Esc 或切走分頁會讓瀏覽器收回這個許可，要重新來一次。
-const lock = { active: false, t0: 0, primed: false, timer: 0, selfExit: false, holdMs: 6000 };
+const lock = { active: false, t0: 0, primed: false, timer: 0, selfExit: false, holdMs: 6000, fresh: 0 };
+const jumpLog = [];   // 除錯用：單筆事件讓位置跳太多時記下來（?debug 時可以從 app.jumpLog 看）
 let recorder = null, recStream = null, recChunks = [], scriptResolve = null, recT0 = 0;
 const takes = []; let takeSeq = 0;
 
@@ -567,7 +581,13 @@ async function loadFile(file) {
     channels = []; for (let c = 0; c < Math.min(2, buf.numberOfChannels); c++) channels.push(buf.getChannelData(c));
     dur = buf.duration;
     mono = new Float32Array(channels[0].length);
-    for (const ch of channels) for (let i = 0; i < mono.length; i++) mono[i] += ch[i] / channels.length;
+    let pk = 0;
+    for (const ch of channels) for (let i = 0; i < mono.length; i++) { const x = ch[i]; mono[i] += x / channels.length; if (x > pk) pk = x; else if (-x > pk) pk = -x; }
+    vol.peak = pk;
+    if (vol.norm) {                          // 正規化的音量是照上一個檔案算的，換檔案要重算
+      const db = normDb();
+      if (db == null) { vol.db = vol.prev; vol.norm = false; } else vol.db = db;
+    }
     buildPeaks();
     st.pos = 0; st.playing = false; st.posT = performance.now();
     zoom = clamp(Math.min(4, dur), 0.25, 60);
@@ -579,9 +599,9 @@ async function loadFile(file) {
     el.scrubWrap.classList.toggle('grow', !hasVideo);
     el.play.disabled = el.rec.disabled = false;
     an.lastS = -1; an.disp = null;
-    layout(); buildOverview(); updUI();
+    layout(); buildOverview(); updUI(); updVol();
     if (hasVideo) startScan(el.vid.src); else stopScan();
-    if (!el.status.textContent.startsWith('影片沒有')) status('');
+    if (!el.status.textContent.startsWith('影片沒有')) status(vol.norm ? '已依這個檔案重新正規化：' + volText() : '', 4000);
     el.scrubWrap.setAttribute('aria-valuemax', dur.toFixed(2)); el.scrubWrap.setAttribute('aria-disabled', 'false');
     say(`已載入 ${file.name}，長度 ${fmtShort(dur)}`);
   } catch (e) {
@@ -619,7 +639,7 @@ function buildNode(posSamples) {
   if (node) { node.port.onmessage = null; node.disconnect(); }
   node = new AudioWorkletNode(ctx, 'scrub', {
     numberOfInputs: 0, numberOfOutputs: 1, outputChannelCount: [channels.length],
-    processorOptions: { channels, N, pos: posSamples },
+    processorOptions: { channels, N, pos: posSamples, vol: volGain() },
   });
   node.connect(master); node.connect(recDest);
   node.port.onmessage = onWorklet;
@@ -634,7 +654,7 @@ function onWorklet(e) {
   if (d.t === 'pos') { st.pos = d.pos / sr; st.posT = performance.now(); st.wmode = d.mode; st.wrate = d.rate; }
   else if (d.t === 'ended') { st.playing = false; updUI(); }
   else if (d.t === 'script') { scriptResolve && scriptResolve(d.script); scriptResolve = null; }
-  else if (d.t === 'scriptEnd') { if (st.replaying) say('重播結束'); st.replaying = null; st.playing = false; send({ t:'pitch', on: el.pitch.checked }); send({ t:'freeze', on: el.freeze.checked }); send({ t:'rate', rate: st.rate }); renderTakes(); updUI(); }
+  else if (d.t === 'scriptEnd') { if (st.replaying) say('重播結束'); st.replaying = null; st.playing = false; send({ t:'pitch', on: el.pitch.checked }); send({ t:'freeze', on: el.freeze.checked }); send({ t:'rate', rate: st.rate }); send({ t:'vol', v: volGain() }); renderTakes(); updUI(); }
 }
 
 // ---------- 播放控制 ----------
@@ -654,10 +674,40 @@ function updUI() {
   el.play.disabled = !node || !!st.replaying;
   el.play.classList.toggle('primary', !!node);   // 每個畫面只有一顆實心按鈕
   el.rec.disabled = !node || !!st.replaying;
+  el.norm.disabled = !node || !!st.replaying;
+  el.vol.disabled = !!st.replaying;                // 重播中引擎照紀錄裡的音量播，滑桿暫停使用
   for (const b of el.grainSeg.children) b.disabled = !!recorder || !!st.replaying || el.pitch.checked;   // 變調模式不用片段
 }
 el.play.onclick = togglePlay;
 el.speed.oninput = () => { st.rate = +el.speed.value; el.speedOut.textContent = st.rate.toFixed(2) + '×'; send({ t:'rate', rate: st.rate }); };
+// 音量：以 dB 計，做在引擎裡，所以錄製、重播、匯出的 WAV 都帶著當時的音量
+const VOL_MIN = -30, VOL_MAX = 30, NORM_PEAK = Math.pow(10, -1 / 20);   // 滑桿拉到最左是靜音；正規化目標：最大聲的地方 -1 dBFS
+const vol = { db: 0, norm: false, prev: 0, peak: 0 };   // peak：原檔各聲道的最大絕對值；norm：目前的音量是正規化算出來的；prev：正規化之前的音量
+const volGain = () => vol.db <= VOL_MIN ? 0 : Math.pow(10, vol.db / 20);
+const volText = () => vol.db <= VOL_MIN ? '靜音' : (vol.db > 0 ? '+' : '') + vol.db.toFixed(1) + ' dB';
+const normDb = () => vol.peak > 1e-4 ? clamp(20 * Math.log10(NORM_PEAK / vol.peak), VOL_MIN + 0.5, VOL_MAX) : null;   // 靜音檔沒有東西可以正規化
+function updVol() {
+  const hot = vol.peak * volGain() > 1.001, txt = volText();   // 預估會不會破音：原檔峰值 × 倍率超過 1
+  el.vol.value = vol.db; el.vol.setAttribute('aria-valuetext', txt + (hot ? '，會破音' : ''));
+  el.volOut.textContent = txt; el.volOut.classList.toggle('hot', hot);
+  el.volOut.title = hot ? '超過這個檔案不破音的最大音量，大聲的地方會破音' : '';
+  el.norm.setAttribute('aria-pressed', String(vol.norm));
+}
+function setVol(db, norm = false) {
+  vol.db = clamp(db, VOL_MIN, VOL_MAX); vol.norm = norm;
+  send({ t:'vol', v: volGain() }); updVol();
+}
+el.vol.oninput = () => setVol(+el.vol.value);
+el.vol.ondblclick = () => setVol(0);
+el.norm.onclick = () => {
+  if (vol.norm) { setVol(vol.prev); say('取消正規化，音量 ' + volText()); return; }
+  const db = normDb();
+  if (db == null) { status('這個檔案是靜音，沒有東西可以正規化', 4000); return; }
+  const full = 20 * Math.log10(NORM_PEAK / vol.peak);
+  vol.prev = vol.db; setVol(db, true);
+  if (full > VOL_MAX + 0.05) status(`這個檔案太小聲，已調到上限 ${volText()}`, 4000);
+  say('已正規化，音量 ' + volText());
+};
 el.freeze.onchange = () => send({ t:'freeze', on: el.freeze.checked });
 function syncPitchUI() {   // 變調模式下停住本來就沒聲音，凍結不適用
   const v = el.pitch.checked;
@@ -687,7 +737,7 @@ function startDrag(e, kind) {
   try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
   drag.kind = kind; drag.x0 = drag.lastX = e.clientX; drag.acc = 0;
   if (!lock.active) { drag.vx = e.clientX; drag.vy = e.clientY; }     // 還鎖著時 clientX 是凍結的，替身游標留在原位
-  drag.mouse = e.pointerType === 'mouse'; drag.lockAsked = false;
+  drag.mouse = e.pointerType === 'mouse'; drag.lockAsked = false; drag.lockPending = false;
   // 先讀目前播放位置，再進入拖曳狀態（拖曳中 estPos() 回傳的是 dragTarget，會拿到上次拖曳停下的舊值）
   const now = estPos();
   st.dragging = true;
@@ -713,17 +763,23 @@ function moveDrag(e) {
   else {
     if (lock.active) {
       let mx = e.movementX, my = e.movementY;
-      // Chrome 剛鎖定時偶爾會送一筆「游標被移到視窗中央」的假位移；單筆超過視窗 1/4 寬也當成異常丟掉
-      if ((performance.now() - lock.t0 < 120 && Math.abs(mx) > 40) || Math.abs(mx) > innerWidth / 4) mx = my = 0;
+      // Chrome 剛鎖定時會送「游標被移到視窗中央」的假位移：鎖定後前 3 筆或 150ms 內超過 40px 的丟掉；
+      // 任何時候單筆超過視窗 1/4 寬也當成異常丟掉
+      const fresh = lock.fresh > 0 || performance.now() - lock.t0 < 150;
+      if (lock.fresh > 0) lock.fresh--;
+      if ((fresh && Math.abs(mx) > 40) || Math.abs(mx) > innerWidth / 4) mx = my = 0;
       drag.acc += mx;
       moveGhost(mx, my);
+    } else if (drag.lockPending) {
+      return;                               // 已要求鎖定、瀏覽器還沒回應：這段期間的座標不可信（可能已被移到視窗中央），整筆不算
     } else {
+      if (drag.lastX == null) drag.lastX = e.clientX;   // 鎖定失敗後重新起算
       drag.acc += e.clientX - drag.lastX; drag.lastX = e.clientX;
       // 平常不鎖滑鼠（放開時游標就在放開的地方）；拖出視窗左右邊緣才鎖定，改用替身游標繞回
       if (drag.mouse && !drag.lockAsked && el.scrubWrap.requestPointerLock && (e.clientX <= 0 || e.clientX >= innerWidth - 1)) {
-        drag.lockAsked = true;
+        drag.lockAsked = drag.lockPending = true;
         drag.vx = clamp(e.clientX, 0, innerWidth - 1); drag.vy = clamp(e.clientY, 0, innerHeight - 1);
-        try { const r = el.scrubWrap.requestPointerLock(); if (r && r.catch) r.catch(() => {}); } catch {}
+        try { const r = el.scrubWrap.requestPointerLock(); if (r && r.catch) r.catch(lockFailed); } catch { lockFailed(); }
       }
     }
     const k = zoom / el.scrubCv.clientWidth;
@@ -732,6 +788,11 @@ function moveDrag(e) {
     if (t < 0 || t > dur) { t = clamp(t, 0, dur); drag.acc = (drag.p0 - t) / k; }
   }
   t = clamp(t, 0, dur);
+  if (Math.abs(t - st.dragTarget) > zoom * 0.4) {   // 一筆事件跳超過可見範圍的 40%：記下來方便查（正常手速不會）
+    jumpLog.push({ at: Math.round(performance.now()), from: +st.dragTarget.toFixed(3), to: +t.toFixed(3), kind: drag.kind, locked: lock.active,
+                   sinceLock: lock.active ? Math.round(performance.now() - lock.t0) : null, cx: e.clientX, mx: e.movementX, w: innerWidth });
+    if (jumpLog.length > 20) jumpLog.shift();
+  }
   if (t === st.dragTarget) return;
   st.dragTarget = t; lastMoveT = performance.now(); send({ t:'target', pos: t * sr });
 }
@@ -746,9 +807,15 @@ function settleLock() {                     // 拖曳結束時決定要不要解
   clearTimeout(lock.timer);                // 提示還在：先保持鎖定，時間到再解除（期間再按下可以繼續刷）
   lock.timer = setTimeout(() => { if (lock.active && !st.dragging) { lock.primed = true; unlockNow(); } }, lock.holdMs - held + 50);
 }
+function lockFailed() {                    // 鎖定被拒（例如瀏覽器不允許）：回到一般拖曳，座標重新起算
+  if (!drag.lockPending) return;
+  drag.lockPending = false; drag.lastX = null;
+}
+document.addEventListener('pointerlockerror', lockFailed);
 document.addEventListener('pointerlockchange', () => {
+  drag.lockPending = false;
   if (document.pointerLockElement === el.scrubWrap) {
-    lock.active = true; lock.t0 = performance.now(); lock.selfExit = false;
+    lock.active = true; lock.t0 = performance.now(); lock.selfExit = false; lock.fresh = 3;
     document.body.classList.add('locked'); ghostState(); placeGhost();
     if (!st.dragging) settleLock();        // 鎖定晚到、拖曳已經結束
     return;
@@ -1356,7 +1423,7 @@ addEventListener('keyup', e => { if (e.code === 'KeyF' && kb.hold) { kb.hold = f
 addEventListener('blur', () => { kb.hold = false; if (st.dragging) endDrag(); });   // 切走視窗時結束任何刷動
 el.vid.addEventListener('loadedmetadata', layout);
 
-if (/[?&]debug\b/.test(location.search)) window.app = { loadFile, st, takes, fc, an, lock, detectPitch, noteOf, AW, get node() { return node; }, get ctx() { return ctx; }, encodeWav, get workletURL() { return workletURL; }, get channels() { return channels; } };
+if (/[?&]debug\b/.test(location.search)) window.app = { loadFile, st, takes, fc, an, lock, jumpLog, vol, setVol, detectPitch, noteOf, AW, get node() { return node; }, get ctx() { return ctx; }, encodeWav, get workletURL() { return workletURL; }, get channels() { return channels; } };
 applyTheme(); markGrain(); layout(); renderTakes(); updUI(); loop();
 </script>
 </body>
